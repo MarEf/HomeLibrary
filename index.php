@@ -1,5 +1,7 @@
 <?php
-$isbn_pattern = "^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d\-\s]+$|(?:\D*\d){9}[xX]$";
+# Later on, rename this file to book_lookup.php!
+
+$isbn_pattern = "^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d\-\s]+$|(?:\D*\d){9}[\d\-\s]*[xX]$";
 $api_url = "https://openlibrary.org/api/books?bibkeys=ISBN:";
 $data_format = "&jscmd=data&format=json";
 
@@ -60,6 +62,7 @@ if (isset($_POST["search"])) {
     */
 
     # Initialize values;
+    $book_id = "";
     $title = "";
     $authors = "";
     $cover = "";
@@ -97,16 +100,17 @@ if (isset($_POST["search"])) {
 
     # Send book data to book page.
     echo "
-        <form id='book_data' methor='POST' action='book.php'>
+        <form id='book_data' method='POST' action='book.php'>
+            <input type='hidden' name='book_id' value='$book_id'>
             <input type='hidden' name='title' value='$title'>
-            <input type='hidden' name='authors' value='$authors'>¨
+            <input type='hidden' name='authors' value='$authors'>
             <input type='hidden' name='cover' value='$cover'>
             <input type='hidden' name='isbn10' value='$isbn10'>
             <input type='hidden' name='isbn13' value='$isbn13'>
             <input type='hidden' name='source' value='$source'>
         </form>
         <script>
-            querySelector('#book_data').submit();
+            document.querySelector('#book_data').submit();
         </script>
     ";
 }
@@ -125,16 +129,16 @@ if (isset($_POST["search"])) {
 <body>
 
     <?php include "header.html" ?>
+    <div id="content">
+        <form action="" method="POST">
+            <label for="isbn">ISBN
+                <input name="isbn" id="isbn" type="text" pattern=<?php echo $isbn_pattern ?> placeholder="9781234567890">
+            </label>
+            <input type="submit" name="search" value="Search">
+        </form>
 
-    <form action="" method="POST">
-        <label for="isbn">ISBN
-            <input name="isbn" id="isbn" type="text" pattern=<?php echo $isbn_pattern ?> placeholder="9781234567890">
-        </label>
-        <input type="submit" name="search" value="Search">
-    </form>
-
-    <?php include "footer.html" ?>
-
+        <?php include "footer.html" ?>
+    </div>
 </body>
 
 </html>

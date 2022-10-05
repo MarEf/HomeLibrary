@@ -1,6 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Merriweather+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    --header-font: 'Cinzel', serif;
+    --main-font: 'Merriweather Sans', sans-serif;
+    --main-color: #F5F5F5;
+    --header-color: #FAEBD7;
+    --header-font-color: hsl(19, 56%, 20%);
+    --main-font-color: hsl(0, 0%, 20%);
+    --shadow-color: gray;
+    --button-color: hsl(34, 78%, 80%);
+    --button-hover-color: hsl(34, 78%, 60%)
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--main-font);
+    background-color: var(--main-color);
+    color: var(--main-font-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 label,
 input,
 textarea,
 select {
     display: block;
+    width: 100%;
+    font-size: inherit;
+    margin-top: 0.6em;
+}
+
+select,
+input[type="submit"] {
+    border: none;
+    font-family: var(--main-font);
+    background-color: var(--button-color);
+}
+
+select:hover,
+input[type="submit"]:hover {
+    background-color: var(--button-hover-color);
+}
+
+input[type="submit"] {
+    margin-top: 1em;
+}
+
+input[type="submit"]:last-of-type {
+    margin-bottom: 2em;
+}
+
+input,
+textarea,
+select {
+    padding: 0.5em;
+}
+
+
+header {
+    font-family: var(--header-font);
+    box-shadow: 0 1px 3px var(--shadow-color);
+}
+
+footer {
+    min-height: 2em;
+    margin-top: auto;
+    box-shadow: 0 -1px 3px var(--shadow-color);
+}
+
+header,
+footer {
+    background-color: var(--header-color);
+    color: var(--header-font-color);
+}
+
+h1 {
+    padding: 0.5rem 1rem;
+}
+
+h2 {
+    margin-bottom: 1em;
+}
+
+p {
+    margin-bottom: 0.7em;
+}
+
+#content {
+    width: 80%;
+    padding-top: 2em;
+    margin-left: auto;
+    margin-right: auto;
 }

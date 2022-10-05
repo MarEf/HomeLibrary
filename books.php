@@ -1,0 +1,2 @@
+<?php
+# Rajapinta kirjojen käsittelyyn

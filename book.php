@@ -1,4 +1,7 @@
 <?php
+
+include_once 'connect.php';
+
 $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
 $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
 
@@ -11,7 +14,6 @@ $isbn_10 = "";
 $isbn_13 = "";
 
 # Set variables from POST.
-
 if (isset($_POST['isbn_result'])) {
     $book_id = $_POST['book_id'];
     $title = $_POST['title'];
@@ -19,6 +21,18 @@ if (isset($_POST['isbn_result'])) {
     $cover = $_POST['cover'];
     $isbn10 = $_POST['isbn10'];
     $isbn13 = $_POST['isbn13'];
+}
+
+# Fetch languages from database
+$query = "SELECT language_id, name_fin FROM languages";
+$languages = $yhteys->query($query);
+
+function list_languages($languages)
+{
+    while ($row = $languages->fetch_assoc()) {
+        #title, description, release_year, rating
+        echo "<option value='{$row["language_id"]}'>{$row['name_fin']}</option>";
+    }
 }
 
 #This page does not function correctly yet.
@@ -39,20 +53,17 @@ if (isset($_POST['isbn_result'])) {
     <?php include "header.html" ?>
     <div id="content">
 
-        <form action="books.php" method="POST">
+        <form action="book_handler.php" method="POST">
             <label for="title">Otsikko
                 <input type="text" name="title" id="title" value="<?php echo $title ?>" required>
             </label>
             <label for="authors">Kirjailija(t)
+                <!--DATA ON THIS FIELD IS CURRENTLY UNHANDLED-->
                 <input type="text" name="authors" id="authors" value="<?php echo $authors ?>" required>
             </label>
             <label for="language">Kieli
                 <select name="language" id="language">
-                    <option value="">Valitse kieli</option>
-                    <option value="1">Englanti</option>
-                    <option value="2">Suomi</option>
-                    <option value="3">Japani</option>
-                    <option value="4">Venäjä</option>
+                    <?php list_languages($languages) ?>
                 </select>
             </label>
             <label for="cover">Linkki kansikuvaan:
@@ -74,7 +85,7 @@ if (isset($_POST['isbn_result'])) {
                 <input type='submit' name='add_book' value='Lisää uusi kirja'>
                 <input type='submit' name='add_and_collect' value='Lisää uusi kirja ja lisää se kokoelmaan'>";
             } else {
-                echo '<input type="submit" name="collect" value="Lisää kokoelmaan">';
+                echo '<input type="submit" name="collect_book" value="Lisää kokoelmaan">';
                 echo '<input type="submit" name="update_book" value="Päivitä kirja">';
                 echo '<input type="submit" name="delete_book" value="Poista kirja">';
             }

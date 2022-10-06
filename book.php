@@ -10,8 +10,9 @@ $book_id = "";
 $title = "";
 $authors = "";
 $cover = "";
-$isbn_10 = "";
-$isbn_13 = "";
+$isbn10 = "";
+$isbn13 = "";
+$source = "none";
 
 # Set variables from POST.
 if (isset($_POST['isbn_result'])) {
@@ -21,6 +22,7 @@ if (isset($_POST['isbn_result'])) {
     $cover = $_POST['cover'];
     $isbn10 = $_POST['isbn10'];
     $isbn13 = $_POST['isbn13'];
+    $source = $_POST['source'];
 }
 
 # Fetch languages from database
@@ -52,6 +54,14 @@ function list_languages($languages)
 <body>
     <?php include "header.html" ?>
     <div id="content">
+        <?php
+        if ($source == 'Local') {
+            echo '<h2>Muokkaa kirjan tietoja</h2>';
+        } else {
+            echo '<h2>Uusi kirja</h2>';
+        }
+
+        ?>
 
         <form action="book_handler.php" method="POST">
             <label for="title">Otsikko
@@ -61,8 +71,9 @@ function list_languages($languages)
                 <!--DATA ON THIS FIELD IS CURRENTLY UNHANDLED-->
                 <input type="text" name="authors" id="authors" value="<?php echo $authors ?>" required>
             </label>
-            <label for="language">Kieli
-                <select name="language" id="language">
+            <label for="language_id">Kieli
+                <select name="language_id" id="language_id" required>
+                    <option value="">Valitse kieli</option>
                     <?php list_languages($languages) ?>
                 </select>
             </label>
@@ -79,7 +90,7 @@ function list_languages($languages)
                 <textarea name="blurb" id="blurb" cols="30" rows="10"></textarea>
             </label>
             <?php
-            if ($_POST['source'] != "Local") {
+            if ($source != "Local") {
                 echo "
                 <input type='hidden' name='book_id' value=$book_id>
                 <input type='submit' name='add_book' value='Lisää uusi kirja'>

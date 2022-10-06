@@ -38,7 +38,11 @@ function add_book($yhteys)
         $add_book->bind_param("ssisss", $_POST['title'], $_POST['cover'], $_POST['language_id'], $_POST['isbn10'], $_POST['isbn13'], $_POST['blurb']);
         $add_book->execute();
         $yhteys->close();
+        header('Location: ' . 'isbn_lookup.php');
+        die();
     } catch (Throwable $e) {
+        echo "Kirjan lisääminen ei onnistunut.<br>";
+        echo $e;
     }
 }
 

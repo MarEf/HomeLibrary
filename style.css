@@ -7,6 +7,7 @@
     --header-color: #FAEBD7;
     --header-font-color: hsl(19, 56%, 20%);
     --main-font-color: hsl(0, 0%, 20%);
+    --placeholder-font-color: hsl(0, 0%, 70%);
     --shadow-color: gray;
     --button-color: hsl(34, 78%, 80%);
     --button-hover-color: hsl(34, 78%, 60%)
@@ -63,6 +64,15 @@ select {
     padding: 0.5em;
 }
 
+::placeholder {
+    color: var(--placeholder-font-color);
+    opacity: 1;
+}
+
+::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: var(--placeholder-font-color);
+}
 
 header {
     font-family: var(--header-font);
@@ -93,9 +103,26 @@ p {
     margin-bottom: 0.7em;
 }
 
+table {
+    border-collapse: collapse;
+    max-width: 100%;
+}
+
+td,
+th {
+    border: 1px solid var(--main-font-color);
+    padding: 0.5em;
+    text-align: left;
+    align-items: middle;
+}
+
 #content {
     width: 80%;
     padding-top: 2em;
     margin-left: auto;
     margin-right: auto;
+}
+
+.ws_only {
+    display: none;
 }

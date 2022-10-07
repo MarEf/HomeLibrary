@@ -87,11 +87,11 @@ function print_results($result)
         $title = $row['title'];
         $blurb = $row['blurb'];
 
-        if (strlen($title) > 50) {
-            $title = substr($title, 0, 50) . "...";
+        if (strlen($title) > 100) {
+            $title = substr($title, 0, 100) . "...";
         }
-        if (strlen($blurb) > 50) {
-            $blurb = substr($blurb, 0, 50) . "...";
+        if (strlen($blurb) > 100) {
+            $blurb = substr($blurb, 0, 100) . "...";
         }
 
         $results .= "<tr>

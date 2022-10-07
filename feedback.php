@@ -15,8 +15,7 @@
     <?php include "header.html" ?>
 
     <div id="content">
-        <p>Pidätkö sovelluksesta? Jäikö jokin askarruttamaan?
-            Voit jättää palautetta alla olevalla lomakkeella.
+        <p>Pidätkö sovelluksesta? Jäikö jokin askarruttamaan? Voit jättää palautetta alla olevalla lomakkeella.
         </p>
 
         <form action="" method="POST">

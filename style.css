@@ -108,7 +108,7 @@ i {
 }
 
 #title-and-nav a {
-    padding: 0.7rem;
+    padding: 0.5rem;
 }
 
 #title-and-nav a:hover {
@@ -126,6 +126,11 @@ i {
 
 .menu a {
     display: none;
+    font-weight: 500;
+}
+
+.menu a:visited {
+    color: var(--header-font-color);
 }
 
 .menu a.icon {
@@ -135,6 +140,27 @@ i {
 
 .menu a:hover {
     background-color: var(--menu-select);
+}
+
+/*Menu isolla näytöllä*/
+@media screen and (min-width: 1100px) {
+    #title-and-nav {
+        width: 30%;
+    }
+
+    .menu {
+        justify-content: space-evenly;
+    }
+
+    .menu a.icon {
+        display: none;
+    }
+
+    .menu a {
+        display: inline-block;
+        padding: 1.1em;
+    }
+
 }
 
 /*Menun avaus ja sulkeminen*/
@@ -191,6 +217,19 @@ th {
     margin-right: auto;
 }
 
-.ws_only {
-    display: none;
+
+/*Tämä on yksinkertaisempaa tehdä näin päin*/
+
+@media screen and (max-width: 1000px) {
+    .ws_only {
+        display: none;
+    }
+}
+
+/*Sisältö isolla näytöllä*/
+@media screen and (min-width: 1100px) {
+    #content {
+        width: 60%;
+    }
+
 }

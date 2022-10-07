@@ -62,7 +62,7 @@ function add_book($yhteys)
     $query = "INSERT INTO books (title, cover, language_id, isbn_10, isbn_13, blurb)
               VALUES (?, ?, ?, ?, ?, ?)";
     $isbn10 = preg_replace("/\W|_/", '', $_POST['isbn10']);
-    $isbn13 = preg_replace("/\D|_/", '', $_POST['isbn13']);
+    $isbn13 = preg_replace("/\W|_/", '', $_POST['isbn13']);
 
     try {
         $add_book = $yhteys->prepare($query);
@@ -115,15 +115,15 @@ function update_book($yhteys)
               SET title = ?, cover = ?, language_id = ?, isbn_10 = ?, isbn_13 = ?, blurb = ?
               WHERE book_id = ?";
     $isbn10 = preg_replace("/\W|_/", '', $_POST['isbn10']);
-    $isbn13 = preg_replace("/\D|_/", '', $_POST['isbn13']);
+    $isbn13 = preg_replace("/\W|_/", '', $_POST['isbn13']);
 
     try {
         $edit_book = $yhteys->prepare($query);
         $edit_book->bind_param("ssisssi", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb'], $_POST['book_id']);
         $edit_book->execute();
         $yhteys->close();
-        header('Location: ' . 'book_lookup.php');
-        die();
+        #header('Location: ' . 'book_lookup.php');
+        #die();
     } catch (Throwable $e) {
         echo "Päivitys epäonnistui: " . $e;
     }

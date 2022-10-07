@@ -139,7 +139,7 @@ function print_results($result)
                 <td class='ws_only'>$isbn13</td>
                 <td>$blurb_display</td>
                 <td>
-                    Collect 
+                        <button type='submit'><i class='fa fa-book'></i></button>
                     $book_form
                         <button type='submit'><i class='fa fa-edit'></i></button>
                     </form>

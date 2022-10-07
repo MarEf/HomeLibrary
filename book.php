@@ -109,11 +109,11 @@ function list_languages($languages)
                 <input type='submit' name='add_book' value='Lisää uusi kirja'>
                 <input type='submit' name='add_and_collect' value='Lisää uusi kirja ja lisää se kokoelmaan'>";
             } else {
+                echo "<input type='hidden' name='book_id' value=$book_id>";
                 echo '<input type="submit" name="collect_book" value="Lisää kokoelmaan">';
                 echo '<input type="submit" name="update_book" value="Päivitä kirja">';
                 echo '<input type="submit" name="delete_book" value="Poista kirja">';
             }
-
             ?>
         </form>
 

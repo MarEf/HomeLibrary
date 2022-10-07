@@ -13,9 +13,10 @@ $cover = "";
 $isbn10 = "";
 $isbn13 = "";
 $source = "none";
+$blurb = "";
 
 # Set variables from POST.
-if (isset($_POST['isbn_result'])) {
+if (isset($_POST['from_post'])) {
     $book_id = $_POST['book_id'];
     $title = $_POST['title'];
     $authors = $_POST['authors'];
@@ -23,6 +24,12 @@ if (isset($_POST['isbn_result'])) {
     $isbn10 = $_POST['isbn10'];
     $isbn13 = $_POST['isbn13'];
     $source = $_POST['source'];
+    if (isset($_POST['blurb'])) {
+        $blurb = $_POST['blurb'];
+    }
+    if (isset($_POST['language_id'])) {
+        $default_language = $_POST['language_id'];
+    }
 }
 
 # Fetch languages from database
@@ -31,9 +38,13 @@ $languages = $yhteys->query($query);
 
 function list_languages($languages)
 {
+    global $default_language;
     while ($row = $languages->fetch_assoc()) {
-        #title, description, release_year, rating
-        echo "<option value='{$row["language_id"]}'>{$row['name_fin']}</option>";
+        if ($row['language_id'] === $default_language) {
+            echo "<option selected value='{$row["language_id"]}'>{$row['name_fin']}</option>";
+        } else {
+            echo "<option value='{$row["language_id"]}'>{$row['name_fin']}</option>";
+        }
     }
 }
 
@@ -89,7 +100,7 @@ function list_languages($languages)
                 <input type="text" name="isbn13" id="isbn13" pattern=<?php echo $isbn13_pattern ?> value="<?php echo $isbn13 ?>">
             </label>
             <label for="blurb">Kuvaus/Takakansiteksti
-                <textarea name="blurb" id="blurb" cols="30" rows="10"></textarea>
+                <textarea name="blurb" id="blurb" cols="30" rows="10"><?php echo $blurb ?></textarea>
             </label>
             <?php
             if ($source != "Local") {

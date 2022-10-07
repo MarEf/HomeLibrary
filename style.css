@@ -156,7 +156,7 @@ i {
         display: none;
     }
 
-    .menu a {
+    .menu a.nav {
         display: inline-block;
         padding: 1.1em;
     }
@@ -164,6 +164,7 @@ i {
 }
 
 /*Menun avaus ja sulkeminen*/
+
 .menu.opened {
     position: relative;
     flex-direction: column;
@@ -197,6 +198,13 @@ a {
     text-decoration: none;
 }
 
+button {
+    border: none;
+    background-color: var(--main-color);
+    color: var(--main-font-color);
+    margin: 2px;
+}
+
 table {
     border-collapse: collapse;
     max-width: 100%;
@@ -213,6 +221,7 @@ th {
 #content {
     width: 80%;
     padding-top: 2em;
+    padding-bottom: 3em;
     margin-left: auto;
     margin-right: auto;
 }

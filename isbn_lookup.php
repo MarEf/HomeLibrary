@@ -70,10 +70,9 @@ if (isset($_POST["search"])) {
     $isbn13 = "";
     $source = "none";
 
-    # Remove non-numbers from search
-    $isbn = preg_replace("/\D|_/", '', $_POST["isbn"]);
+    # Remove non-alphanumerics from search
+    $isbn = preg_replace("/\W|_/", '', $_POST["isbn"]);
     # Check local database for existing entry
-
 
 
     # If fail, search OpenLibrary
@@ -99,6 +98,7 @@ if (isset($_POST["search"])) {
     }
 
     # Send book data to book page.
+    # $from-post is a value used by book.php to detect that values were sent to it. It can be gibberish
     echo "
         <form id='book_data' method='POST' action='book.php'>
             <input type='hidden' name='book_id' value='$book_id'>
@@ -108,7 +108,7 @@ if (isset($_POST["search"])) {
             <input type='hidden' name='isbn10' value='$isbn10'>
             <input type='hidden' name='isbn13' value='$isbn13'>
             <input type='hidden' name='source' value='$source'>
-            <input type='hidden' name='isbn_result' value='$isbn_result'>
+            <input type='hidden' name='from_post' value='true'>
         </form>
         <script>
             document.querySelector('#book_data').submit();

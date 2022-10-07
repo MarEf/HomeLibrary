@@ -7,6 +7,15 @@ $query = "SELECT language_id, name_fin FROM languages";
 $languages = $yhteys->query($query);
 $results = "";
 
+$book_id = "";
+$title = "";
+$authors = "";
+$cover = "";
+$isbn10 = "";
+$isbn13 = "";
+$blurb = "";
+$language_id;
+
 function list_languages($languages)
 {
     while ($row = $languages->fetch_assoc()) {
@@ -17,7 +26,7 @@ function list_languages($languages)
 
 if (@$_POST['find_books']) {
     $title = "%{$_POST['title']}%";
-    $isbn = "%{$_POST['isbn']}%";
+    $isbn = "%" . preg_replace("/\W|_/", '', $_POST['isbn']) . "%";
 
     # Initialize query based on input
     switch (true) {
@@ -84,25 +93,61 @@ function print_results($result)
 
     while ($row = $result->fetch_assoc()) {
         # These can be so long, so let's trim them a little.
-        $title = $row['title'];
-        $blurb = $row['blurb'];
+        $title_display = $row['title'];
+        $blurb_display = $row['blurb'];
+        global $book_form;
 
-        if (strlen($title) > 100) {
-            $title = substr($title, 0, 100) . "...";
+        global $book_id;
+        global $title;
+        global $authors;
+        global $cover;
+        global $isbn10;
+        global $isbn13;
+        global $blurb;
+        global $language_id;
+
+        $book_id = $row['book_id'];
+        $title = $row['title'];
+        $cover = $row['cover'];
+        $isbn10 = $row['isbn_10'];
+        $isbn13 = $row['isbn_13'];
+        $blurb = $row['blurb'];
+        $language_id = $row['language_id'];
+
+        $book_form = "<form id='book_data' method='POST' action='book.php'>
+                        <input type='hidden' name='book_id' value='$book_id'>
+                        <input type='hidden' name='title' value='$title'>
+                        <input type='hidden' name='authors' value='$authors'>
+                        <input type='hidden' name='cover' value='$cover'>
+                        <input type='hidden' name='language_id' value='$language_id'>
+                        <input type='hidden' name='isbn10' value='$isbn10'>
+                        <input type='hidden' name='isbn13' value='$isbn13'>
+                        <input type='hidden' name='blurb' value='$blurb'>
+                        <input type='hidden' name='source' value='Local'>
+                        <input type='hidden' name='from_post' value='true'>";
+
+        if (strlen($title_display) > 100) {
+            $title_display = substr($title_display, 0, 100) . "...";
         }
-        if (strlen($blurb) > 100) {
-            $blurb = substr($blurb, 0, 100) . "...";
+        if (strlen($blurb_display) > 100) {
+            $blurb_display = substr($blurb_display, 0, 100) . "...";
         }
 
         $results .= "<tr>
-                <td>$title</td>
-                <td class='ws_only'>{$row['isbn_10']}</td>
-                <td class='ws_only'>{$row['isbn_13']}</td>
-                <td>$blurb</td>
+                <td>$title_display</td>
+                <td class='ws_only'>$isbn10</td>
+                <td class='ws_only'>$isbn13</td>
+                <td>$blurb_display</td>
                 <td>
                     Collect 
-                    Edit 
-                    Delete
+                    $book_form
+                        <button type='submit'><i class='fa fa-edit'></i></button>
+                    </form>
+                    <form action='book_handler.php' method='POST'>
+                        <input type='hidden' name='book_id' value='$book_id'>
+                        <input type='hidden' name='delete_book' value='true'>
+                        <button type='submit'><i class='fas fa-trash-alt'></i></button>
+                    </form>
                 </td>
              </tr>
              ";
@@ -130,6 +175,7 @@ function print_results($result)
     <?php include "header.html" ?>
 
     <div id="content">
+
         <form action="" method="POST">
             <label for="title"> Otsikko tai otsikon osa
                 <input type="text" name="title" id="title">

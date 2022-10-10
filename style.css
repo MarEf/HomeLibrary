@@ -11,7 +11,8 @@
     --placeholder-font-color: hsl(0, 0%, 70%);
     --shadow-color: gray;
     --button-color: hsl(34, 78%, 80%);
-    --button-hover-color: hsl(34, 78%, 60%)
+    --button-hover-color: hsl(34, 78%, 60%);
+    --inactive-link-color: hsl(0, 0%, 50%);
 }
 
 * {
@@ -111,9 +112,23 @@ i {
     padding: 0.5rem;
 }
 
-#title-and-nav a:hover {
+a {
+    color: var(--header-font-color);
+}
+
+a:hover {
     background-color: var(--header-color);
 }
+
+a:visited {
+    color: var(--header-font-color);
+}
+
+h1 a {
+    padding: 0.5rem 1rem;
+    display: inline-block;
+}
+
 
 .menu {
     overflow: hidden;
@@ -124,13 +139,9 @@ i {
     justify-content: flex-end;
 }
 
-.menu a {
+.menu>a {
     display: none;
     font-weight: 500;
-}
-
-.menu a:visited {
-    color: var(--header-font-color);
 }
 
 .menu a.icon {
@@ -138,7 +149,7 @@ i {
     font-size: 2rem;
 }
 
-.menu a:hover {
+.menu>a:hover {
     background-color: var(--menu-select);
 }
 
@@ -182,9 +193,6 @@ i {
 }
 
 /*Content*/
-h1 {
-    padding: 0.5rem 1rem;
-}
 
 h2 {
     margin-bottom: 1em;
@@ -198,12 +206,14 @@ a {
     text-decoration: none;
 }
 
+
 button {
     border: none;
     background-color: var(--main-color);
     color: var(--main-font-color);
-    margin: 2px;
+    margin: 0.2em;
 }
+
 
 table {
     border-collapse: collapse;
@@ -226,6 +236,26 @@ th {
     margin-right: auto;
 }
 
+.add {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+.remove {
+    margin-top: 0.25em;
+    margin-left: 0.2em;
+}
+
+.author {
+    width: 100%;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.inactive {
+    color: var(--inactive-link-color);
+}
 
 /*Tämä on yksinkertaisempaa tehdä näin päin*/
 

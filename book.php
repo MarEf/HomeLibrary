@@ -32,19 +32,36 @@ if (isset($_POST['from_post'])) {
     }
 }
 
-# Fetch languages from database
-$query = "SELECT language_id, name_fin FROM languages";
-$languages = $yhteys->query($query);
 
-function list_languages($languages)
+
+
+function list_languages()
 {
     global $default_language;
+    global $yhteys;
+
+    # Fetch languages from database
+    $query = "SELECT language_id, name_fin FROM languages";
+    $languages = $yhteys->query($query);
+
     while ($row = $languages->fetch_assoc()) {
         if ($row['language_id'] === $default_language) {
             echo "<option selected value='{$row["language_id"]}'>{$row['name_fin']}</option>";
         } else {
             echo "<option value='{$row["language_id"]}'>{$row['name_fin']}</option>";
         }
+    }
+}
+
+function get_authors()
+{
+    global $yhteys;
+
+    $query = "SELECT * FROM authors";
+    $authors = $yhteys->query($query);
+
+    while ($row = $authors->fetch_assoc()) {
+        echo "<option value='{$row['name']}'></option>";
     }
 }
 
@@ -80,14 +97,22 @@ function list_languages($languages)
             <label for="title">Otsikko
                 <input type="text" name="title" id="title" value="<?php echo $title ?>" required>
             </label>
-            <label for="authors">Kirjailija(t)
+            <label for="author" id="author-list">Kirjailija(t)
                 <!--DATA ON THIS FIELD IS CURRENTLY UNHANDLED-->
-                <input type="text" name="authors" id="authors" value="<?php echo $authors ?>" required>
+                <span class="author" id="author-block1">
+                    <input list="authors" name="author[]" id="author1">
+                    <i class="far fa-minus-square remove inactive"></i>
+                </span>
+
+                <i class="far fa-plus-square add" onclick="addAuthorField()"></i>
             </label>
+            <datalist id="authors">
+                <?php get_authors() ?>
+            </datalist>
             <label for="language_id">Kieli
                 <select name="language_id" id="language_id" required>
                     <option value="">Valitse kieli</option>
-                    <?php list_languages($languages) ?>
+                    <?php list_languages() ?>
                 </select>
             </label>
             <label for="cover">Linkki kansikuvaan:

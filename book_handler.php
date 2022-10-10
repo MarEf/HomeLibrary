@@ -5,60 +5,34 @@ include_once 'connect.php';
 switch (true) {
     case isset($_POST['add_book']):
         echo "Lisää kirja";
-        add_book($yhteys);
+        add_book();
         break;
     case isset($_POST['collect_book']):
         echo "Lisää kokoelmaan";
-        collect_book($yhteys);
+        collect_book();
         break;
     case isset($_POST['add_and_collect']):
         echo "Luo ja lisää kokoelmaan";
-        # add_book($yhteys);
-        # collect_book($yhteys);
+        # add_book();
+        # collect_book();
         break;
     case isset($_POST['update_book']):
         echo "Päivitä kirja";
-        update_book($yhteys);
+        update_book();
         break;
     case isset($_POST['delete_book']):
         echo "Poista kirja";
-        delete_book($yhteys);
+        delete_book();
         break;
     default:
         echo "Olet joko nero tai kömpelö, koska yllä oli kaikki käyttötapaukset...";
         break;
 }
 
-/*
-# Add a book to the database
-if (isset($_POST['add_book'])) {
-    add_book($yhteys);
-}
 
-# Add a book to collection
-if (isset($_POST['collect_book'])) {
-    # collect_book($yhteys);
-}
-
-# Add a book to the database and to collection
-if (isset($_POST['add_and_collect'])) {
-    # add_book($yhteys);
-    # collect_book($yhteys);
-}
-
-# Edit book
-if (isset($_POST['update_book'])) {
-    update_book($yhteys);
-}
-
-# Delete book
-if (isset($_POST['delete_book'])) {
-    delete_book($yhteys);
-}
-*/
-
-function add_book($yhteys)
+function add_book()
 {
+    global $yhteys;
     $query = "INSERT INTO books (title, cover, language_id, isbn_10, isbn_13, blurb)
               VALUES (?, ?, ?, ?, ?, ?)";
     $isbn10 = preg_replace("/\W|_/", '', $_POST['isbn10']);
@@ -68,17 +42,69 @@ function add_book($yhteys)
         $add_book = $yhteys->prepare($query);
         $add_book->bind_param("ssisss", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb']);
         $add_book->execute();
-        $yhteys->close();
-        header('Location: ' . 'isbn_lookup.php');
-        die();
     } catch (Throwable $e) {
         echo "Kirjan lisääminen ei onnistunut.<br>";
         echo $e;
     }
+
+    var_dump($_POST['author']);
+
+    if (isset($_POST['author'])) {
+        add_authors();
+    }
+
+    //header('Location: ' . 'isbn_lookup.php');
+    die();
 }
 
-function collect_book($yhteys)
+function add_authors()
 {
+    echo "Adding authors";
+    global $yhteys;
+    $authors = $_POST['author'];
+
+    // Prepare queries
+    $query = "SELECT author_id FROM authors
+              WHERE name = ?";
+    $find_author = $yhteys->prepare($query);
+    $query = "INSERT INTO authors (name)
+              VALUES (?)";
+    $create_author = $yhteys->prepare($query);
+    $query = "INSERT INTO book_author (book_id, author_id)
+                  VALUES (?, ?)";
+    $bind = $yhteys->prepare($query);
+
+    // Check if an author by name is already in the system.
+    foreach ($authors as $author) {
+        echo "Checking if an author by name $author exists";
+        $find_author->bind_param("s", $author);
+        $find_author->execute();
+        $result = $find_author->get_result();
+
+        if ($result->num_rows === 0) {
+            // If the author does not exist, create an entry.
+            echo "Author not found";
+            $create_author->bind_param("s", $author);
+            $create_author->execute();
+            $find_author->execute();
+            $result = $find_author->get_result();
+            echo "Author added to database";
+        }
+
+        $author_id = $result->fetch_row();
+        echo "Book ID: $author_id";
+        // Bind book to author
+        echo "Adding author to book";
+        $bind->bind_param("ii", $_POST['book_id'], $author_id['id']);
+        $bind->execute();
+        echo "Added author to book.";
+    }
+}
+
+
+function collect_book()
+{
+    global $yhteys;
     $query = "INSERT INTO book_user (book_id, user_id, owned)
               VALUES (?, ?, ?)";
     /*
@@ -93,8 +119,9 @@ function collect_book($yhteys)
     */
 }
 
-function borrow_book($yhteys)
+function borrow_book()
 {
+    global $yhteys;
     $query = "INSERT INTO book_user (book_id, user_id, owned, borrowed_from, borrowed_to) 
               VALUES (?, ?, ?, ?, ?)";
     /*
@@ -109,8 +136,9 @@ function borrow_book($yhteys)
     */
 }
 
-function update_book($yhteys)
+function update_book()
 {
+    global $yhteys;
     $query = "UPDATE books 
               SET title = ?, cover = ?, language_id = ?, isbn_10 = ?, isbn_13 = ?, blurb = ?
               WHERE book_id = ?";
@@ -129,8 +157,9 @@ function update_book($yhteys)
     }
 }
 
-function delete_book($yhteys)
+function delete_book()
 {
+    global $yhteys;
     $query = "DELETE FROM books 
               WHERE book_id = ?";
     try {

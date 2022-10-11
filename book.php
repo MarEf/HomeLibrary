@@ -94,7 +94,6 @@ function prefill_authors()
     }
 }
 
-#This page does not function correctly yet.
 ?>
 
 <!DOCTYPE html>

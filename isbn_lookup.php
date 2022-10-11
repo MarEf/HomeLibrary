@@ -1,9 +1,15 @@
 <?php
-# Later on, rename this file to book_lookup.php!
+include_once 'connect.php';
 
 $isbn_pattern = "^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d\-\s]+$|(?:\D*\d){9}[\d\-\s]*[xX]$";
 $api_url = "https://openlibrary.org/api/books?bibkeys=ISBN:";
 $data_format = "&jscmd=data&format=json";
+$books = "SELECT * FROM books
+          LEFT JOIN book_author
+            ON books.book_id = book_author.book_id
+          LEFT JOIN authors
+            ON book_author.author_id = authors.author_id
+          WHERE isbn_10 = ? OR isbn_13 = ?";
 
 function fetchTitle($book)
 {
@@ -74,6 +80,40 @@ if (isset($_POST["search"])) {
     $isbn = preg_replace("/\W|_/", '', $_POST["isbn"]);
     # Check local database for existing entry
 
+    global $books;
+    $find_book = $yhteys->prepare($books);
+    $find_book->bind_param("ss", $isbn, $isbn);
+    $find_book->execute();
+    $result = $find_book->get_result()->fetch_assoc();
+
+    if ($result) {
+        $book_id = $result['book_id'];
+        $title = $result['title'];
+        # $authors = $row['name']; // Disabled, until I figure out how to get this crap to work as intended
+        $cover = $result['cover'];
+        $isbn10 = $result['isbn_10'];
+        $isbn13 = $result['isbn_13'];
+        $blurb = $result['blurb'];
+        $language_id = $result['language_id'];
+        $source = "Local";
+
+        echo "
+        <form id='book_data' method='POST' action='book.php'>
+            <input type='hidden' name='book_id' value='$book_id'>
+            <input type='hidden' name='title' value='$title'>
+            <input type='hidden' name='authors' value='$authors'>
+            <input type='hidden' name='cover' value='$cover'>
+            <input type='hidden' name='isbn10' value='$isbn10'>
+            <input type='hidden' name='isbn13' value='$isbn13'>
+            <input type='hidden' name='source' value='$source'>
+            <input type='hidden' name='from_post' value='true'>
+        </form>
+        <script>
+            document.querySelector('#book_data').submit();
+        </script>
+    ";
+        die();
+    }
 
     # If fail, search OpenLibrary
     $url = $api_url . $isbn . $data_format;

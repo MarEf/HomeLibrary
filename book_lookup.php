@@ -32,27 +32,27 @@ if (@$_POST['find_books']) {
     switch (true) {
         case ($title !== "%%" && $isbn !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE title  LIKE ? AND (isbn_10 LIKE ? OR isbn_13 = LIKE ?)
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
-                        ON book_author.author_id = authors.author_id';
+                        ON book_author.author_id = authors.author_id
+                      WHERE title LIKE ? AND (isbn_10 LIKE ? OR isbn_13 LIKE ?)';
             break;
         case ($title !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE title LIKE ?
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
-                        ON book_author.author_id = authors.author_id';
+                        ON book_author.author_id = authors.author_id
+                      WHERE title LIKE ?';
             break;
         case ($isbn !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
-                        ON book_author.author_id = authors.author_id';
+                        ON book_author.author_id = authors.author_id
+                      WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?';
             break;
         default:
             $query = 'SELECT * FROM books
@@ -80,9 +80,9 @@ if (@$_POST['find_books']) {
         }
 
         $find_book->execute();
-        $result = $find_book->get_result();
+        $result = $find_book->get_result()->fetch_all(MYSQLI_ASSOC);
 
-        if ($result->num_rows === 0) {
+        if (count($result) === 0) {
             $results = "<p>Hakua vastaavaa kirjaa ei löytynyt. Haluatko lisätä sen?</p>
                   <form action='isbn_lookup.php'>
                     <input type='submit' value='Lisää uusi kirja' />
@@ -114,7 +114,7 @@ function set_book_array($sql_result)
         ]
     */
 
-    while ($row = $sql_result->fetch_assoc()) {
+    foreach ($sql_result as $row) {
         # These can be so long, so let's trim them a little.
         $title_display = $row['title'];
         $blurb_display = $row['blurb'];
@@ -162,7 +162,7 @@ function print_results($result)
            ";
 
 
-    while ($row = $result->fetch_assoc()) {
+    foreach ($result as $row) {
         # These can be so long, so let's trim them a little.
         $title_display = $row['title'];
         $blurb_display = $row['blurb'];

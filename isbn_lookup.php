@@ -23,7 +23,7 @@ function fetchAuthors($book)
             array_push($authors, $author_array[$key]['name']);
         }
     }
-    return implode(", ", $authors);
+    return implode("@£$", $authors); # If an author has this set of characters in their pen name, I deny responsibility.
 }
 
 function fetchCover($book)

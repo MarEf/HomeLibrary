@@ -8,7 +8,7 @@ $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
 # Set all variables to empty string.
 $book_id = "";
 $title = "";
-$authors = "";
+$authors = [];
 $cover = "";
 $isbn10 = "";
 $isbn13 = "";
@@ -19,7 +19,7 @@ $blurb = "";
 if (isset($_POST['from_post'])) {
     $book_id = $_POST['book_id'];
     $title = $_POST['title'];
-    $authors = $_POST['authors'];
+    $authors = explode("@£$", $_POST['authors']);
     $cover = $_POST['cover'];
     $isbn10 = $_POST['isbn10'];
     $isbn13 = $_POST['isbn13'];
@@ -65,6 +65,35 @@ function get_authors()
     }
 }
 
+function prefill_authors()
+{
+    global $authors;
+    $author_count = 1;
+
+    if (isset($_POST['authors'])) {
+
+        foreach ($authors as $author) {
+            if ($author_count == 1) {
+                echo "<span class='author' id='author-block1'>
+                        <input list='authors' name='author[]' id='author1' value='$author' required>
+                        <i class='far fa-minus-square remove inactive'></i>
+                      </span>";
+            } else {
+                echo "<span class='author' id='author-block$author_count'>
+                        <input list='authors' name='author[]' id='author$author_count' value='$author' required>
+                        <i class='far fa-minus-square remove'></i>
+                      </span>";
+            }
+            $author_count++;
+        }
+    } else {
+        echo "<span class='author' id='author-block1'>
+            <input list='authors' name='author[]' id='author1' required>
+            <i class='far fa-minus-square remove inactive'></i>
+          </span>";
+    }
+}
+
 #This page does not function correctly yet.
 ?>
 
@@ -98,10 +127,7 @@ function get_authors()
                 <input type="text" name="title" id="title" value="<?php echo $title ?>" required>
             </label>
             <label for="author" id="author-list">Kirjailija(t)
-                <span class="author" id="author-block1">
-                    <input list="authors" name="author[]" id="author1" required>
-                    <i class="far fa-minus-square remove inactive"></i>
-                </span>
+                <?php prefill_authors() ?>
 
                 <i class="far fa-plus-square add" onclick="addAuthorField()"></i>
             </label>

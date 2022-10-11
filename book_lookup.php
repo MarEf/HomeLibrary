@@ -32,20 +32,37 @@ if (@$_POST['find_books']) {
     switch (true) {
         case ($title !== "%%" && $isbn !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE title  LIKE ? AND (isbn_10 LIKE ? OR isbn_13 = LIKE ?)';
+                      WHERE title  LIKE ? AND (isbn_10 LIKE ? OR isbn_13 = LIKE ?)
+                      LEFT JOIN book_author
+                        ON books.book_id = book_author.book_id
+                      LEFT JOIN authors
+                        ON book_author.author_id = authors.author_id';
             break;
         case ($title !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE title LIKE ?';
+                      WHERE title LIKE ?
+                      LEFT JOIN book_author
+                        ON books.book_id = book_author.book_id
+                      LEFT JOIN authors
+                        ON book_author.author_id = authors.author_id';
             break;
         case ($isbn !== "%%"):
             $query = 'SELECT * FROM books
-                      WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?';
+                      WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?
+                      LEFT JOIN book_author
+                        ON books.book_id = book_author.book_id
+                      LEFT JOIN authors
+                        ON book_author.author_id = authors.author_id';
             break;
         default:
-            $query = 'SELECT * FROM books';
+            $query = 'SELECT * FROM books
+                      LEFT JOIN book_author
+                        ON books.book_id = book_author.book_id
+                      LEFT JOIN authors
+                        ON book_author.author_id = authors.author_id';
             break;
     }
+
 
     # Fetch results
     try {
@@ -71,10 +88,63 @@ if (@$_POST['find_books']) {
                     <input type='submit' value='Lisää uusi kirja' />
                   </form>";
         } else {
+            #$book_array = set_book_array($result);
             $results = print_results($result);
         }
     } catch (Throwable $e) {
         echo "Jokin meni pieleen: <br> $e";
+    }
+}
+
+function set_book_array($sql_result)
+{
+    $books = [];
+
+    /*
+    array format:
+        [
+            "book_id" => "",
+            "title" => "",
+            "authors" => [],
+            "cover" => "",
+            "isbn10" => "",
+            "isbn13" => "",
+            "blurb" => "",
+            "language_id" => ""
+        ]
+    */
+
+    while ($row = $sql_result->fetch_assoc()) {
+        # These can be so long, so let's trim them a little.
+        $title_display = $row['title'];
+        $blurb_display = $row['blurb'];
+
+        if (strlen($title_display) > 100) {
+            $title_display = substr($title_display, 0, 100) . "...";
+        }
+        if (strlen($blurb_display) > 100) {
+            $blurb_display = substr($blurb_display, 0, 100) . "...";
+        }
+
+        # Set to initial values
+        global $book_id;
+        global $title;
+        global $authors;
+        global $cover;
+        global $isbn10;
+        global $isbn13;
+        global $blurb;
+        global $language_id;
+
+        # Get actual values from database if applicable
+        $book_id = $row['book_id'];
+        $title = $row['title'];
+        $authors = $row['name'];
+        $cover = $row['cover'];
+        $isbn10 = $row['isbn_10'];
+        $isbn13 = $row['isbn_13'];
+        $blurb = $row['blurb'];
+        $language_id = $row['language_id'];
     }
 }
 
@@ -83,6 +153,7 @@ function print_results($result)
     $results = "<table>
           <tr>
             <th>Otsikko</th>
+            <th class='ws-only'>Kirjailija</th>
             <th class='ws_only'>ISBN 10</th>
             <th class='ws_only'>ISBN 13</th>
             <th>Kuvaus</th>
@@ -108,6 +179,7 @@ function print_results($result)
 
         $book_id = $row['book_id'];
         $title = $row['title'];
+        $authors = $row['name'];
         $cover = $row['cover'];
         $isbn10 = $row['isbn_10'];
         $isbn13 = $row['isbn_13'];
@@ -135,6 +207,7 @@ function print_results($result)
 
         $results .= "<tr>
                 <td>$title_display</td>
+                <td class='ws_only'>$authors</td>
                 <td class='ws_only'>$isbn10</td>
                 <td class='ws_only'>$isbn13</td>
                 <td>$blurb_display</td>

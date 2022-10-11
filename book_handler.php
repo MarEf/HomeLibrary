@@ -4,28 +4,28 @@ include_once 'connect.php';
 
 switch (true) {
     case isset($_POST['add_book']):
-        echo "Lisää kirja";
+        echo "Lisää kirja<br>";
         add_book();
         break;
     case isset($_POST['collect_book']):
-        echo "Lisää kokoelmaan";
+        echo "Lisää kokoelmaan<br>";
         collect_book();
         break;
     case isset($_POST['add_and_collect']):
-        echo "Luo ja lisää kokoelmaan";
+        echo "Luo ja lisää kokoelmaan<br>";
         # add_book();
         # collect_book();
         break;
     case isset($_POST['update_book']):
-        echo "Päivitä kirja";
+        echo "Päivitä kirja<br>";
         update_book();
         break;
     case isset($_POST['delete_book']):
-        echo "Poista kirja";
+        echo "Poista kirja<br>";
         delete_book();
         break;
     default:
-        echo "Olet joko nero tai kömpelö, koska yllä oli kaikki käyttötapaukset...";
+        echo "Olet joko nero tai kömpelö, koska yllä oli kaikki käyttötapaukset...<br>";
         break;
 }
 
@@ -53,13 +53,13 @@ function add_book()
         add_authors();
     }
 
-    //header('Location: ' . 'isbn_lookup.php');
+    header('Location: ' . 'isbn_lookup.php');
     die();
 }
 
 function add_authors()
 {
-    echo "Adding authors";
+    echo "Adding authors<br>";
     global $yhteys;
     $authors = $_POST['author'];
 
@@ -76,28 +76,28 @@ function add_authors()
 
     // Check if an author by name is already in the system.
     foreach ($authors as $author) {
-        echo "Checking if an author by name $author exists";
+        echo "Checking if an author by name $author exists<br>";
         $find_author->bind_param("s", $author);
         $find_author->execute();
         $result = $find_author->get_result();
 
         if ($result->num_rows === 0) {
             // If the author does not exist, create an entry.
-            echo "Author not found";
+            echo "Author not found<br>";
             $create_author->bind_param("s", $author);
             $create_author->execute();
             $find_author->execute();
             $result = $find_author->get_result();
-            echo "Author added to database";
+            echo "Author added to database<br>";
         }
 
         $author_id = $result->fetch_row();
-        echo "Book ID: $author_id";
+        echo "Author ID: $author_id[0]<br>";
         // Bind book to author
-        echo "Adding author to book";
-        $bind->bind_param("ii", $_POST['book_id'], $author_id['id']);
+        echo "Adding author to book<br>";
+        $bind->bind_param("ii", $_POST['book_id'], $author_id[0]);
         $bind->execute();
-        echo "Added author to book.";
+        echo "Added author to book.<br>";
     }
 }
 
@@ -149,9 +149,15 @@ function update_book()
         $edit_book = $yhteys->prepare($query);
         $edit_book->bind_param("ssisssi", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb'], $_POST['book_id']);
         $edit_book->execute();
-        $yhteys->close();
-        #header('Location: ' . 'book_lookup.php');
-        #die();
+
+        echo "Yritetään päivittää kirja {$_POST['title']}, jonka ID on {$_POST['book_id']}<br>";
+        var_dump($_POST['author']);
+
+        if (isset($_POST['author'])) {
+            add_authors();
+        }
+        header('Location: ' . 'book_lookup.php');
+        die();
     } catch (Throwable $e) {
         echo "Päivitys epäonnistui: " . $e;
     }

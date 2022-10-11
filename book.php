@@ -98,9 +98,8 @@ function get_authors()
                 <input type="text" name="title" id="title" value="<?php echo $title ?>" required>
             </label>
             <label for="author" id="author-list">Kirjailija(t)
-                <!--DATA ON THIS FIELD IS CURRENTLY UNHANDLED-->
                 <span class="author" id="author-block1">
-                    <input list="authors" name="author[]" id="author1">
+                    <input list="authors" name="author[]" id="author1" required>
                     <i class="far fa-minus-square remove inactive"></i>
                 </span>
 

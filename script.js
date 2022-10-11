@@ -10,9 +10,8 @@ function openMenu() {
 
 function addAuthorField() {
     const count = document.getElementById("author-list").childElementCount;
-    console.log(count);
     const author = document.getElementById("author-block" + (count - 1));
-    let html = "<span class='author' id='author-block" + count + "'><input list='authors' name='auhtor[]' id='author" + count + "'><i class='far fa-minus-square remove' onclick='removeAuthorField(\"author-block" + count + "\")'></i></span > ";
+    let html = "<span class='author' id='author-block" + count + "'><input list='authors' name='author[]' id='author" + count + "'><i class='far fa-minus-square remove' onclick='removeAuthorField(\"author-block" + count + "\")'></i></span> ";
     author.insertAdjacentHTML("afterend", html);
 }
 

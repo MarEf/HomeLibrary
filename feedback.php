@@ -1,3 +1,21 @@
+<?php
+include_once 'connect.php';
+
+if (isset($_POST)) {
+    $query = "INSERT INTO feedbacks (user_id, topic, message)
+              VALUES (?, ?, ?)";
+    try {
+        $add_feedback = $yhteys->prepare($query);
+        $add_feedback->bind_param("iss", $_SESSION['user_id'], $_POST['topic'], $_POST['message']);
+        $add_feedback->execute();
+    } catch (Throwable $e) {
+        echo "Palautteen anto ei onnistunut.<br>";
+        echo $e;
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,11 +33,24 @@
     <?php include "header.html" ?>
 
     <div id="content">
-        <p>Pidätkö sovelluksesta? Jäikö jokin askarruttamaan? Voit jättää palautetta alla olevalla lomakkeella.
+        <h2>Anna palautetta</h2>
+        <p>
+            Pidätkö sovelluksesta? Jäikö jokin askarruttamaan? Voit jättää palautetta alla olevalla lomakkeella.
+        </p>
+        <p>
+            ÄLÄ YRITÄ ANTAA OIKEASTI PALAUTETTA! Lomake ei tällä hetkellä toimi.
         </p>
 
-        <form action="" method="POST">
-
+        <form action="" id="feedback-form" method="POST">
+            <input type="hidden" name="user_id">
+            <!--Poimitaan POST-muuttujasta-->
+            <label for="topic">Palautteen aihe
+                <input type="text" id="topic" name="topic" maxlength="255" required>
+            </label>
+            <label for="feedback">Palaute
+                <textarea name="feedback" id="message" rows="15" maxlength="5000" required></textarea>
+            </label>
+            <input type="submit" value="Lähetä palaute">
         </form>
     </div>
 

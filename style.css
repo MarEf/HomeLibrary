@@ -66,6 +66,14 @@ select {
     padding: 0.5em;
 }
 
+textarea {
+    resize: none;
+}
+
+#feedback-form {
+    margin-top: 3em;
+}
+
 ::placeholder {
     color: var(--placeholder-font-color);
     opacity: 1;

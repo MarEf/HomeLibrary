@@ -70,6 +70,12 @@ textarea {
     resize: none;
 }
 
+input[type="checkbox"] {
+    width: fit-content;
+    margin-right: 0.3em;
+    display: inline-block;
+}
+
 #feedback-form {
     margin-top: 3em;
 }
@@ -100,6 +106,7 @@ footer {
     background-color: var(--header-color);
     color: var(--header-font-color);
 }
+
 
 /*Menu*/
 
@@ -214,6 +221,10 @@ a {
     text-decoration: none;
 }
 
+#content div {
+    margin-bottom: 1em;
+}
+
 
 button {
     border: none;
@@ -264,6 +275,8 @@ th {
 .inactive {
     color: var(--inactive-link-color);
 }
+
+
 
 /*Tämä on yksinkertaisempaa tehdä näin päin*/
 

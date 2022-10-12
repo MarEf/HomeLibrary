@@ -172,7 +172,7 @@ if (isset($_POST["search"])) {
 
 <body>
 
-    <?php include "header.html" ?>
+    <?php include "header.php" ?>
 
     <div id="content">
         <form action="" method="POST">

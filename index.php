@@ -13,7 +13,7 @@
 
 <body>
 
-    <?php include "header.html" ?>
+    <?php include "header.php" ?>
 
     <div id="content">
         <h2>Tervetuloa omaan kirjastoosi!</h2>

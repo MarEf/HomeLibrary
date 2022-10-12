@@ -110,7 +110,7 @@ function prefill_authors()
 </head>
 
 <body>
-    <?php include "header.html" ?>
+    <?php include "header.php" ?>
     <div id="content">
         <?php
         if ($source == 'Local') {

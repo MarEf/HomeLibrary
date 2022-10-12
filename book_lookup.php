@@ -245,7 +245,7 @@ function print_results($result)
 </head>
 
 <body>
-    <?php include "header.html" ?>
+    <?php include "header.php" ?>
 
     <div id="content">
 

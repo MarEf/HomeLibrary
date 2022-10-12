@@ -30,7 +30,7 @@ if (isset($_POST)) {
 </head>
 
 <body>
-    <?php include "header.html" ?>
+    <?php include "header.php" ?>
 
     <div id="content">
         <h2>Anna palautetta</h2>

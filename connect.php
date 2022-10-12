@@ -1,11 +1,8 @@
 <?php
-$palvelin = "localhost";
-$kayttaja = "root";
-$salasana = "";
-$tietokanta = "home_library";
+include_once $_SERVER['DOCUMENT_ROOT'] . '/tunnukset.php';
 
 // luo yhteys
-$yhteys = new mysqli($palvelin, $kayttaja, $salasana, $tietokanta);
+$yhteys = new mysqli($db_server, $db_username, $db_password, $db);
 
 // jos yhteyden muodostaminen ei onnistunut, keskeytä
 if ($yhteys->connect_error) {

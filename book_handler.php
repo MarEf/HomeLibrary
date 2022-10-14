@@ -96,6 +96,9 @@ function add_authors()
         // Bind book to author
         echo "Adding author to book<br>";
         $bind->bind_param("ii", $_POST['book_id'], $author_id[0]);
+        // If author did not exist and was added manually, this line fails with an error:
+        // Fatal error: Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails...
+        // However, it sometimes works fine. I don't know how to fix this.
         $bind->execute();
         echo "Added author to book.<br>";
     }
@@ -149,9 +152,6 @@ function update_book()
         $edit_book = $yhteys->prepare($query);
         $edit_book->bind_param("ssisssi", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb'], $_POST['book_id']);
         $edit_book->execute();
-
-        echo "Yritetään päivittää kirja {$_POST['title']}, jonka ID on {$_POST['book_id']}<br>";
-        var_dump($_POST['author']);
 
         if (isset($_POST['author'])) {
             add_authors();

@@ -31,35 +31,85 @@ if (@$_POST['find_books']) {
     # Initialize query based on input
     switch (true) {
         case ($title !== "%%" && $isbn !== "%%"):
-            $query = 'SELECT * FROM books
+            /* $query = 'SELECT * FROM books
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
                         ON book_author.author_id = authors.author_id
-                      WHERE title LIKE ? AND (isbn_10 LIKE ? OR isbn_13 LIKE ?)';
+                      WHERE title LIKE ? AND (isbn_10 LIKE ? OR isbn_13 LIKE ?)'; */
+
+            $query = "SELECT b.*,
+                    GROUP_CONCAT(ba.author_id),
+                    GROUP_CONCAT(a.name SEPARATOR ', ')
+                  FROM books AS b
+                  LEFT JOIN book_author AS ba
+                    ON b.book_id = ba.book_id
+                  LEFT JOIN authors AS a
+                    ON ba.author_id = a.author_id
+                  WHERE title LIKE ? AND (isbn_10 LIKE ? OR isbn_13 LIKE ?)
+                  GROUP BY b.title";
+
             break;
         case ($title !== "%%"):
-            $query = 'SELECT * FROM books
+            /* $query = 'SELECT * FROM books
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
                         ON book_author.author_id = authors.author_id
-                      WHERE title LIKE ?';
+                      WHERE title LIKE ?'; */
+
+
+            $query = "SELECT b.*,
+                    GROUP_CONCAT(ba.author_id),
+                    GROUP_CONCAT(a.name SEPARATOR ', ')
+                  FROM books AS b
+                  LEFT JOIN book_author AS ba
+                    ON b.book_id = ba.book_id
+                  LEFT JOIN authors AS a
+                    ON ba.author_id = a.author_id
+                  WHERE title LIKE ?
+                  GROUP BY b.title";
             break;
         case ($isbn !== "%%"):
+            /*
             $query = 'SELECT * FROM books
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
                         ON book_author.author_id = authors.author_id
                       WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?';
+            */
+
+            $query = "SELECT b.*,
+                    GROUP_CONCAT(ba.author_id),
+                    GROUP_CONCAT(a.name SEPARATOR ', ')
+                  FROM books AS b
+                  LEFT JOIN book_author AS ba
+                    ON b.book_id = ba.book_id
+                  LEFT JOIN authors AS a
+                    ON ba.author_id = a.author_id
+                  WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?
+                  GROUP BY b.title";
+
             break;
         default:
+            /*
             $query = 'SELECT * FROM books
                       LEFT JOIN book_author
                         ON books.book_id = book_author.book_id
                       LEFT JOIN authors
                         ON book_author.author_id = authors.author_id';
+            */
+            $query = "SELECT b.*,
+                    GROUP_CONCAT(ba.author_id),
+                    GROUP_CONCAT(a.name SEPARATOR ', ')
+                  FROM books AS b
+                  LEFT JOIN book_author AS ba
+                    ON b.book_id = ba.book_id
+                  LEFT JOIN authors AS a
+                    ON ba.author_id = a.author_id
+                  GROUP BY b.title";
+
             break;
     }
 
@@ -96,71 +146,20 @@ if (@$_POST['find_books']) {
     }
 }
 
-function set_book_array($sql_result)
-{
-    $books = [];
 
-    /*
-    array format:
-        [
-            "book_id" => "",
-            "title" => "",
-            "authors" => [],
-            "cover" => "",
-            "isbn10" => "",
-            "isbn13" => "",
-            "blurb" => "",
-            "language_id" => ""
-        ]
-    */
-
-    foreach ($sql_result as $row) {
-        # These can be so long, so let's trim them a little.
-        $title_display = $row['title'];
-        $blurb_display = $row['blurb'];
-
-        if (strlen($title_display) > 100) {
-            $title_display = substr($title_display, 0, 100) . "...";
-        }
-        if (strlen($blurb_display) > 100) {
-            $blurb_display = substr($blurb_display, 0, 100) . "...";
-        }
-
-        # Set to initial values
-        global $book_id;
-        global $title;
-        global $authors;
-        global $cover;
-        global $isbn10;
-        global $isbn13;
-        global $blurb;
-        global $language_id;
-
-        # Get actual values from database if applicable
-        $book_id = $row['book_id'];
-        $title = $row['title'];
-        $authors = $row['name'];
-        $cover = $row['cover'];
-        $isbn10 = $row['isbn_10'];
-        $isbn13 = $row['isbn_13'];
-        $blurb = $row['blurb'];
-        $language_id = $row['language_id'];
-    }
-}
 
 function print_results($result)
 {
     $results = "<table>
           <tr>
             <th>Otsikko</th>
-            <th class='ws-only'>Kirjailija</th>
+            <th class='ws_only'>Kirjailija</th>
             <th class='ws_only'>ISBN 10</th>
             <th class='ws_only'>ISBN 13</th>
             <th>Kuvaus</th>
             <th></th>
            </tr>
            ";
-
 
     foreach ($result as $row) {
         # These can be so long, so let's trim them a little.
@@ -179,7 +178,7 @@ function print_results($result)
 
         $book_id = $row['book_id'];
         $title = $row['title'];
-        $authors = $row['name'];
+        $authors = $row['GROUP_CONCAT(a.name SEPARATOR \', \')'];
         $cover = $row['cover'];
         $isbn10 = $row['isbn_10'];
         $isbn13 = $row['isbn_13'];
@@ -248,6 +247,7 @@ function print_results($result)
     <?php include "header.php" ?>
 
     <div id="content">
+        <h1>Selaa kirjoja</h1>
 
         <form action="" method="POST">
             <label for="title"> Otsikko tai otsikon osa

@@ -4,12 +4,23 @@ include_once 'connect.php';
 $isbn_pattern = "^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d\-\s]+$|(?:\D*\d){9}[\d\-\s]*[xX]$";
 $api_url = "https://openlibrary.org/api/books?bibkeys=ISBN:";
 $data_format = "&jscmd=data&format=json";
-$books = "SELECT * FROM books
+/* $books = "SELECT * FROM books
           LEFT JOIN book_author
             ON books.book_id = book_author.book_id
           LEFT JOIN authors
             ON book_author.author_id = authors.author_id
-          WHERE isbn_10 = ? OR isbn_13 = ?";
+          WHERE isbn_10 = ? OR isbn_13 = ?"; */
+
+$books = "SELECT b.*,
+            GROUP_CONCAT(ba.author_id),
+            GROUP_CONCAT(a.name SEPARATOR ', ')
+          FROM books AS b
+          LEFT JOIN book_author AS ba
+            ON b.book_id = ba.book_id
+          LEFT JOIN authors AS a
+            ON ba.author_id = a.author_id
+          WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?
+          GROUP BY b.title";
 
 function fetchTitle($book)
 {
@@ -29,7 +40,7 @@ function fetchAuthors($book)
             array_push($authors, $author_array[$key]['name']);
         }
     }
-    return implode("@£$", $authors); # If an author has this set of characters in their pen name, I deny responsibility.
+    return implode(", ", $authors); # If you're an author and you have a comma in your pen name, you're evil.
 }
 
 function fetchCover($book)
@@ -89,7 +100,7 @@ if (isset($_POST["search"])) {
     if ($result) {
         $book_id = $result['book_id'];
         $title = $result['title'];
-        # $authors = $row['name']; // Disabled, until I figure out how to get this crap to work as intended
+        $authors = $result['GROUP_CONCAT(a.name SEPARATOR \', \')'];
         $cover = $result['cover'];
         $isbn10 = $result['isbn_10'];
         $isbn13 = $result['isbn_13'];
@@ -173,7 +184,7 @@ if (isset($_POST["search"])) {
 <body>
 
     <?php include "header.php" ?>
-
+    <h2>Hae kirja</h2>
     <div id="content">
         <form action="" method="POST">
             <label for="isbn">ISBN

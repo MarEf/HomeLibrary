@@ -19,7 +19,7 @@ $blurb = "";
 if (isset($_POST['from_post'])) {
     $book_id = $_POST['book_id'];
     $title = $_POST['title'];
-    $authors = explode("@£$", $_POST['authors']);
+    $authors = explode(", ", $_POST['authors']);
     $cover = $_POST['cover'];
     $isbn10 = $_POST['isbn10'];
     $isbn13 = $_POST['isbn13'];
@@ -106,7 +106,7 @@ function prefill_authors()
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
-    <title>Document</title>
+    <title>Book</title>
 </head>
 
 <body>

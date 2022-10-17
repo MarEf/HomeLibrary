@@ -19,7 +19,7 @@ $books = "SELECT b.*,
             ON b.book_id = ba.book_id
           LEFT JOIN authors AS a
             ON ba.author_id = a.author_id
-          WHERE isbn_10 LIKE ? OR isbn_13 LIKE ?
+          WHERE isbn_10 = ? OR isbn_13 = ?
           GROUP BY b.title";
 
 function fetchTitle($book)
@@ -62,6 +62,16 @@ function fetchISBN($book, $isbn_nro)
 }
 
 if (isset($_POST["search"])) {
+    # Check that the input is of correct format. Who knows what crap someone is
+    # trying to get past the radar...
+    preg_match("/$isbn_pattern/", $_POST['isbn'], $matches, PREG_UNMATCHED_AS_NULL);
+
+    # If the format doesn't match, simply redirect to book.php without sending data.
+    if (!$matches) {
+        header('Location: ' . 'book.php');
+        die();
+    }
+
     /*
     Book information we are interested in:
         * Title

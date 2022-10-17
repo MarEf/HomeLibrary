@@ -2,6 +2,8 @@
 # API for book handling
 include_once 'connect.php';
 
+check_data_format();
+
 switch (true) {
     case isset($_POST['add_book']):
         echo "Lisää kirja<br>";
@@ -29,6 +31,78 @@ switch (true) {
         break;
 }
 
+function check_data_format()
+{
+    $author_pattern = "^[^,]+$";
+    $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
+    $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
+
+    # On error, reroute to book.php
+
+    #ISBN-10 is of the right format
+    if (isset($_POST['isbn10'])) {
+        preg_match("/$isbn10_pattern/", $_POST['isbn10'], $isbn10_match, PREG_UNMATCHED_AS_NULL);
+        if (!$isbn10_match) {
+            header('Location: ' . 'book.php');
+            die();
+        }
+    }
+
+    # ISBN-13 is of the right format
+    if (isset($POST['isbn13'])) {
+        preg_match("/$isbn13_pattern/", $_POST['isbn13'], $isbn13_match, PREG_UNMATCHED_AS_NULL);
+        if (!$isbn13_match) {
+            header('Location: ' . 'book.php');
+            die();
+        }
+    }
+
+    # Title does not exist
+    if (!isset($_POST['title'])) {
+        header('Location: ' . 'book.php');
+        die();
+    }
+    # Author is of the right format
+    if (isset($_POST['author'])) {
+        $authors = $_POST['author'];
+        foreach ($authors as $author) {
+            preg_match("/$author_pattern/", $author, $author_match, PREG_UNMATCHED_AS_NULL);
+            if (!$author_match) {
+                header('Location: ' . 'book.php');
+                die();
+            }
+        }
+    } else {
+        # At least one author must exist.
+        header('Location: ' . 'book.php');
+        die();
+    }
+
+    # Language must be selected, be an integer, and exist in the system
+    if (isset($_POST['language_id'])) {
+        global $yhteys;
+        $language = $_POST['language_id'];
+        $query = "SELECT * FROM languages
+                  WHERE language_id = ?";
+        try {
+            $check_language = $yhteys->prepare($query);
+            $check_language->bind_param("i", $language);
+            $check_language->execute();
+            if (!$check_language->get_result()) {
+                header('Location: ' . 'book.php');
+                die();
+            }
+        } catch (Throwable $e) {
+            # If language_id is not int, binding parameters will fail and lead us here
+            header('Location: ' . 'book.php');
+            die();
+        }
+    } else {
+        header('Location: ' . 'book.php');
+        die();
+    }
+}
+
 
 function add_book()
 {
@@ -46,8 +120,6 @@ function add_book()
         echo "Kirjan lisääminen ei onnistunut.<br>";
         echo $e;
     }
-
-    var_dump($_POST['author']);
 
     if (isset($_POST['author'])) {
         add_authors();
@@ -156,11 +228,11 @@ function update_book()
         if (isset($_POST['author'])) {
             add_authors();
         }
-        header('Location: ' . 'book_lookup.php');
-        die();
     } catch (Throwable $e) {
         echo "Päivitys epäonnistui: " . $e;
     }
+    header('Location: ' . 'book_lookup.php');
+    die();
 }
 
 function delete_book()
@@ -173,11 +245,11 @@ function delete_book()
         $delete->bind_param("i", $_POST['book_id']);
         $delete->execute();
         $yhteys->close();
-        header('Location: ' . 'book_lookup.php');
-        die();
     } catch (Throwable $e) {
         echo "Kirjan poisto epäonnistui: " . $e;
     }
+    header('Location: ' . 'book_lookup.php');
+    die();
 }
 
 echo "En tiedä, miten onnistuit tässä, mutta saavutit kirjakäsittelijän koodin lopun. Sinun ei pitäisi olla täällä.<br>";

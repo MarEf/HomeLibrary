@@ -5,6 +5,9 @@ include_once 'connect.php';
 $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
 $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
 
+# Commas disallowed from author fields, because it breaks everything
+$author_pattern = "^[^,]+$";
+
 # Set all variables to empty string.
 $book_id = "";
 $title = "";
@@ -68,6 +71,7 @@ function get_authors()
 function prefill_authors()
 {
     global $authors;
+    global $author_pattern;
     $author_count = 1;
 
     if (isset($_POST['authors'])) {
@@ -75,12 +79,12 @@ function prefill_authors()
         foreach ($authors as $author) {
             if ($author_count == 1) {
                 echo "<span class='author' id='author-block1'>
-                        <input list='authors' name='author[]' id='author1' value='$author' required>
+                        <input list='authors' name='author[]' id='author1' pattern='$author_pattern' value='$author' required>
                         <i class='far fa-minus-square remove inactive'></i>
                       </span>";
             } else {
                 echo "<span class='author' id='author-block$author_count'>
-                        <input list='authors' name='author[]' id='author$author_count' value='$author' required>
+                        <input list='authors' name='author[]' id='author$author_count' pattern='$author_pattern' value='$author' required>
                         <i class='far fa-minus-square remove'></i>
                       </span>";
             }
@@ -88,7 +92,7 @@ function prefill_authors()
         }
     } else {
         echo "<span class='author' id='author-block1'>
-            <input list='authors' name='author[]' id='author1' required>
+            <input list='authors' name='author[]' id='author1' pattern='$author_pattern' required>
             <i class='far fa-minus-square remove inactive'></i>
           </span>";
     }

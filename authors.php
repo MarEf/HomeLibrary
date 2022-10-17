@@ -1,5 +1,6 @@
 <?php
 include_once 'connect.php';
+$author_pattern = "^[^,]+$";
 
 if (isset($_POST['find_authors'])) {
     $name = "%{$_POST['name']}%";
@@ -34,14 +35,15 @@ try {
 function print_results($sql_result)
 {
     $result = "";
+    global $author_pattern;
 
     foreach ($sql_result as $row) {
         $name = $row['name'];
         $id = $row['author_id'];
 
         $result .= "<form class='author' action='author_handler.php' method='POST'>
-                        <input type='hidden' name='id' id='id' value='$id'>
-                        <input type='text' name='author' id='author' value='$name' required>
+                        <input type='hidden' name='author_id' id='id' value='$id'>
+                        <input type='text' name='name' id='name' pattern='$author_pattern' value='$name' required>
 
                         <button name='edit_author' type='submit'><i class='fa fa-save'></i></i></button>
                         <button name='delete_author' type='submit'><i class='fas fa-trash-alt'></i></button>

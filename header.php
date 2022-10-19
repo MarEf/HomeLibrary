@@ -14,19 +14,19 @@ if (!isset($_SESSION)) {
 ?>
 
 <header>
-    <div class="menu" id="mainMenu">
-        <div id="title-and-nav">
-            <h1><a href="index.php">Home Library</a></h1>
-            <a href="javascript:void(0);" class="icon" onclick="openMenu()">
-                <i class="fa fa-bars menu-closed"></i>
-                <i class="fa fa-xmark menu-opened"></i>
+    <div class='menu' id='mainMenu'>
+        <div id='title-and-nav'>
+            <h1><a href='index.php'>Home Library</a></h1>
+            <a href='javascript:void(0);' class='icon' onclick='openMenu()'>
+                <i class='fa fa-bars menu-closed'></i>
+                <i class='fa fa-xmark menu-opened'></i>
             </a>
         </div>
-        <a class="nav" href="<?php echo $book_lookup ?>">Selaa kirjoja</a>
-        <a class="nav" href="<?php echo $isbn_lookup ?>">Hae kirja</a>
-        <a class="nav" href="<?php echo $book ?>">Uusi kirja</a>
-        <a class="nav" href="<?php echo $collection ?>">Oma kokoelma</a>
-        <a class="nav" href="<?php echo $feedback ?>">Anna palautetta</a>
+        <a class='nav' href='<?php echo $book_lookup ?>'>Selaa kirjoja</a>
+        <a class='nav' href='<?php echo $isbn_lookup ?>'>Hae kirja</a>
+        <a class='nav' href='<?php echo $book ?>'>Uusi kirja</a>
+        <a class='nav' href='<?php echo $collection ?>'>Oma kokoelma</a>
+        <a class='nav' href='<?php echo $feedback ?>'>Anna palautetta</a>
         <?php
         if (isset($_SESSION["loggedin"])) {
             echo "<a class='nav' href=$logout>Kirjaudu ulos</a>";

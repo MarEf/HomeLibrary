@@ -171,7 +171,7 @@ function print_results($result)
         $blurb = $row['blurb'];
         $language_id = $row['language_id'];
 
-        $book_form = "<form id='book_data' method='POST' action='book.php'>
+        $book_form = "<form id='book_data' method='POST' action='../book.php'>
                         <input type='hidden' name='book_id' value='$book_id'>
                         <input type='hidden' name='title' value='$title'>
                         <input type='hidden' name='authors' value='$authors'>
@@ -197,17 +197,13 @@ function print_results($result)
                 <td class='ws_only'>$isbn13</td>
                 <td>$blurb_display</td>
                 <td>
-                    <form action='book_handler.php' method='POST'>
+                    <form action='../book_handler.php' method='POST'>
                         <input type='hidden' name='book_id' value='$book_id'>
-                        <button type='submit'><i class='fa fa-book'></i></button>
+                        <input type='hidden' name='uncollect'>
+                        <button type='submit'><i class='fa fa-ban'></i></i></i></button>
                     </form>
                     $book_form
                         <button type='submit'><i class='fa fa-edit'></i></button>
-                    </form>
-                    <form action='book_handler.php' method='POST'>
-                        <input type='hidden' name='book_id' value='$book_id'>
-                        <input type='hidden' name='delete_book' value='true'>
-                        <button type='submit'><i class='fas fa-trash-alt'></i></button>
                     </form>
                 </td>
              </tr>

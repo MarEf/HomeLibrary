@@ -2,7 +2,7 @@
 $book_lookup = __NAMESPACE__ . "/HomeLibrary/book_lookup.php";
 $isbn_lookup = __NAMESPACE__ . "/HomeLibrary/isbn_lookup.php";
 $book = __NAMESPACE__ . "/HomeLibrary/book.php";
-$collection = __NAMESPACE__ . "/HomeLibrary/users/my_books.php";
+$home = __NAMESPACE__ . "/HomeLibrary/users/home.php";
 $feedback = __NAMESPACE__ . "/HomeLibrary/feedback.php";
 $login = __NAMESPACE__ . "/HomeLibrary/users/login.php";
 $logout = __NAMESPACE__ . "/HomeLibrary/users/logout.php";
@@ -25,7 +25,7 @@ if (!isset($_SESSION)) {
         <a class='nav' href='<?php echo $book_lookup ?>'>Selaa kirjoja</a>
         <a class='nav' href='<?php echo $isbn_lookup ?>'>Hae kirja</a>
         <a class='nav' href='<?php echo $book ?>'>Uusi kirja</a>
-        <a class='nav' href='<?php echo $collection ?>'>Oma kokoelma</a>
+        <a class='nav' href='<?php echo $home ?>'>Omat tiedot</a>
         <a class='nav' href='<?php echo $feedback ?>'>Anna palautetta</a>
         <?php
         if (isset($_SESSION["loggedin"])) {

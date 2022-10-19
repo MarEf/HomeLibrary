@@ -153,16 +153,16 @@ function prefill_authors()
                     <?php list_languages() ?>
                 </select>
             </label>
-            <label for="cover">Linkki kansikuvaan:
+            <label for="cover">Linkki kansikuvaan (vapaaehtoinen)
                 <input type="text" name="cover" id="cover" value="<?php echo $cover ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
-            <label for="isbn10">ISBN-10
+            <label for="isbn10">ISBN-10 (vapaaehtoinen)
                 <input type="text" name="isbn10" id="isbn10" pattern=<?php echo $isbn10_pattern ?> value="<?php echo $isbn10 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
-            <label for="isbn13">ISBN-13
+            <label for="isbn13">ISBN-13 (vapaaehtoinen)
                 <input type="text" name="isbn13" id="isbn13" pattern=<?php echo $isbn13_pattern ?> value="<?php echo $isbn13 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
-            <label for="blurb">Kuvaus/Takakansiteksti
+            <label for="blurb">Kuvaus/Takakansiteksti (vapaaehtoinen)
                 <textarea name="blurb" id="blurb" cols="30" rows="10" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>><?php echo $blurb ?></textarea>
             </label>
             <?php

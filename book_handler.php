@@ -39,6 +39,9 @@ switch (true) {
         header('Location: ' . 'book_lookup.php');
         die();
         break;
+    case isset($_POST['uncollect']):
+        echo "Nothing here yet";
+        break;
     default:
         echo "Olet joko nero tai kömpelö, koska yllä oli kaikki käyttötapaukset...<br>";
         break;

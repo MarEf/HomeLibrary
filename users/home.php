@@ -19,13 +19,34 @@
         <?php
 
         if (isset($_SESSION['loggedin'])) {
-            echo "<p>Tervetuloa {$_SESSION['username']}!</p>
-                  <p>Yksilöintitunnuksesi on {$_SESSION['user_id']}</p>";
+            echo "<h3>Tervetuloa {$_SESSION['username']}!</h3>
+                  <div>
+                    Mitä haluat tehdä tänään?
+                  </div>
+                  
+                  <div>
+
+                  <form action='my_books.php' method='POST'>
+                    <input type='submit' value='Oma kokoelma' />
+                  </form>
+                  <form action='password.php' method='POST'>
+                    <input type='submit' value='Vaihda salasana' />
+                  </form>
+                  <form action='password.php' method='POST'>
+                    <input type='submit' value='Vaihda salasana' />
+                  </form>
+                  <form action='user_handler.php' method='POST'>
+                    <input type='submit' name='delete_user' value='Poista käyttäjätili' />
+                  </form>
+                  
+                  </div>";
         } else {
             echo "Kirjaudu sisään ennen kuin voit tarkastella käyttäjätietoja.";
         }
-
         ?>
+
+
+
     </div>
     <?php include "../footer.html" ?>
 </body>

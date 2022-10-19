@@ -15,6 +15,8 @@
     <?php include "../header.php" ?>
     <div id="content">
         <h2>Oma tili</h2>
+        <p>Tervetuloa <?php echo $_SESSION['username'] ?>!</p>
+        <p>Yksilöintitunnuksesi on <?php echo $_SESSION['user_id'] ?></p>
     </div>
     <?php include "../footer.html" ?>
 </body>

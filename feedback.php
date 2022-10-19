@@ -1,7 +1,7 @@
 <?php
 include_once 'connect.php';
 
-if (isset($_POST)) {
+if (isset($_POST['feedback'])) {
     $query = "INSERT INTO feedbacks (user_id, topic, message)
               VALUES (?, ?, ?)";
     try {
@@ -42,15 +42,14 @@ if (isset($_POST)) {
         </p>
 
         <form action="" id="feedback-form" method="POST">
-            <input type="hidden" name="user_id">
-            <!--Poimitaan POST-muuttujasta-->
+            <input type="hidden" name="user_id" value=<?php echo $_SESSION['user_id'] ?>>
             <label for="topic">Palautteen aihe
                 <input type="text" id="topic" name="topic" maxlength="255" required>
             </label>
             <label for="feedback">Palaute
                 <textarea name="feedback" id="message" rows="15" maxlength="5000" required></textarea>
             </label>
-            <input type="submit" value="Lähetä palaute">
+            <input type="submit" name="feedback" value="Lähetä palaute">
         </form>
     </div>
 

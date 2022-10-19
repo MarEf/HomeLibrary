@@ -16,14 +16,16 @@
     <div id="content">
 
         <h2>Kirjaudu sisään</h2>
-        <label for="username">Käyttäjätunnus
-            <input type="text" name="username" id="username">
-        </label>
-        <label for="password">
-            <input type="password" name="password" id="password" required>
-            <input type="checkbox" onclick="showPassword()">Näytä salasana
-        </label>
-        <input type="submit" name="login" value="Kirjaudu sisään">
+        <form action="user_handler.php" method="POST">
+            <label for="username">Käyttäjätunnus
+                <input type="text" name="username" id="username">
+            </label>
+            <label for="password">
+                <input type="password" name="password" id="password" required>
+                <input type="checkbox" onclick="showPassword()">Näytä salasana
+            </label>
+            <input type="submit" name="login" value="Kirjaudu sisään">
+        </form>
         <div>Unohdin salasanan</div>
         <div><a href="register.php">Luo uusi käyttäjätili</a></div>
     </div>

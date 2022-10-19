@@ -14,6 +14,11 @@ switch (true) {
         header('Location: ' . 'home.php');
         die();
         break;
+    case isset($_POST['logout']):
+        logout();
+        header('Location: ' . '../index.php');
+        die();
+        break;
     case isset($_POST['update_user']):
         update_user();
         header('Location: ' . 'home.php');
@@ -21,12 +26,12 @@ switch (true) {
         break;
     case isset($_POST['recover_password']):
         recover_password();
-        header('Location: ' . 'index.php');
+        header('Location: ' . '../index.php');
         die();
         break;
     case isset($_POST['delete_user']):
         delete_user();
-        header('Location: ' . 'index.php');
+        header('Location: ' . '../index.php');
         die();
         break;
     default:
@@ -123,46 +128,59 @@ function check_username()
 function login()
 {
     global $yhteys;
-    if (empty(trim($_POST["email"]))) {
-        // NO EMAIL ERROR
+    $username = $password = "";
+
+    if (empty(trim($_POST["username"]))) {
+        // NO USERNAME ERROR
+        echo "No username";
         exit;
     } else {
-        $email = trim($_POST["email"]);
+        $username = trim($_POST["username"]);
     }
 
     //Tarkista, ettei salasana ole tyhjä
     if (empty(trim($_POST["password"]))) {
         // NO PASSWORD ERROR
+        echo "No password";
         exit;
     } else {
         $password = trim($_POST["password"]);
     }
 
-    $query = "SELECT username, password 
-              FROM users 
+    $query = "SELECT user_id, username, password
+              FROM user 
               WHERE username=?";
 
     $login = $yhteys->prepare($query);
-    $login->bind_param("s", $email);
+    $login->bind_param("s", $username);
 
     if ($login->execute()) {
-        $result = $login->bind_result($email, $password_hash);
+        $result = $login->bind_result($user_id, $username, $password_hash);
         if ($login->fetch()) {
             if (password_verify($password, $password_hash)) {
                 session_start();
                 $_SESSION["loggedin"] = true;
-
-                //MUUTA TÄMÄ UUDELLEENOHJAAMAAN EDELLISELLE SIVULLE
-                header("location: index.php");
+                $_SESSION["username"] = $username;
+                $_SESSION['user_id'] = $user_id;
             } else {
                 // LOGIN FAIL
+                echo "Failed to log in.";
             }
         } else {
             // LOGIN FAIL
+            echo "Failed to log in.";
         }
     } else {
         // LOGIN FAIL
+        echo "Failed to log in.";
     }
+}
+
+function logout()
+{
+    session_start();
+    $_SESSION = array();
+    session_destroy();
 }
 
 function update_user()

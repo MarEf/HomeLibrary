@@ -194,8 +194,9 @@ if (isset($_POST["search"])) {
 <body>
 
     <?php include "header.php" ?>
-    <h2>Hae kirja</h2>
+
     <div id="content">
+        <h2>Hae kirja</h2>
         <form action="" method="POST">
             <label for="isbn">ISBN
                 <input name="isbn" id="isbn" type="text" pattern=<?php echo $isbn_pattern ?> placeholder="9781234567890">

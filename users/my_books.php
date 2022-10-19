@@ -1,6 +1,9 @@
 <?php
 # Browse books from the local database
 include_once '../connect.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 # Fetch languages from database
 $query = "SELECT language_id, name_fin FROM languages";
@@ -28,7 +31,7 @@ function list_languages($languages)
 if (@$_POST['find_books']) {
     $title = "%{$_POST['title']}%";
     $isbn = "%" . preg_replace("/\W|_/", '', $_POST['isbn']) . "%";
-    $user_id = $_POST['user_id'];
+    $user_id = $_SESSION['user_id'];
 
     # Initialize query based on input
     switch (true) {
@@ -196,7 +199,6 @@ function print_results($result)
                 <td>
                     <form action='book_handler.php' method='POST'>
                         <input type='hidden' name='book_id' value='$book_id'>
-                        <input type='hidden' name='book_id' value='$user_id'>
                         <button type='submit'><i class='fa fa-book'></i></button>
                     </form>
                     $book_form
@@ -254,7 +256,6 @@ function print_results($result)
             list_languages($languages);
             echo "</select>
             </label>
-            <input type='hidden' name='user_id' value=$user_id>
             <input type='submit' name='find_books' value='Hae kirjoja'>
         </form>
         

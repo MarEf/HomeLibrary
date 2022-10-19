@@ -1,6 +1,9 @@
 <?php
 # API for book handling
 include_once 'connect.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 check_data_format();
 
@@ -195,7 +198,8 @@ function collect_book()
 
     try {
         $collect_book = $yhteys->prepare($query);
-        $collect_book->bind_param("ii", $_POST['book_id'], $_POST['user_id']);
+        $collect_book->bind_param("ii", $_POST['book_id'], $_SESSION['user_id']);
+        // Fatal error: Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails...
         $collect_book->execute();
         $yhteys->close();
     } catch (Throwable $e) {

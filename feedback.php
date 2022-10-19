@@ -1,12 +1,15 @@
 <?php
 include_once 'connect.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (isset($_POST['feedback'])) {
     $query = "INSERT INTO feedbacks (user_id, topic, message)
               VALUES (?, ?, ?)";
     try {
         $add_feedback = $yhteys->prepare($query);
-        $add_feedback->bind_param("iss", $_POST['user_id'], $_POST['topic'], $_POST['message']);
+        $add_feedback->bind_param("iss", $_SESSION['user_id'], $_POST['topic'], $_POST['message']);
         $add_feedback->execute();
     } catch (Throwable $e) {
         echo "Palautteen anto ei onnistunut.<br>";
@@ -49,7 +52,6 @@ if (isset($_POST['feedback'])) {
             </p> 
 
             <form action='' id='feedback-form' method='POST'>
-                <input type='hidden' name='user_id' value={$_SESSION['user_id']}>
                 <label for='topic'>Palautteen aihe
                     <input type='text' id='topic' name='topic' maxlength='255' required>
                 </label>

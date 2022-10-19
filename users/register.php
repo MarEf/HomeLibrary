@@ -17,19 +17,27 @@
     <div id="content">
 
         <h2>Luo käyttäjätili</h2>
-        <form action="user_handler.php" method="post">
-            <label for="username">Käyttäjätunnus
-                <input type="text" name="username" id="username" maxlength="255" required>
+
+        <?php
+        if (isset($_SESSION['loggedin'])) {
+            echo "<p>Sinulla on jo käyttäjätili. Mikäli haluat luoda uuden tilin, sinun on ensin kirjauduttava ulos<p/>";
+        } else {
+            echo "
+        <form action='user_handler.php' method='post'>
+            <label for='username'>Käyttäjätunnus
+                <input type='text' name='username' id='username' maxlength='255' required>
             </label>
-            <label for="email">Sähköpostiosoite
-                <input type="email" name="email" id="email" pattern="^[\w._%-]+@[\w.-]+\.[a-z]{2,}$" maxlength="254" required>
+            <label for='email'>Sähköpostiosoite
+                <input type='email' name='email' id='email' pattern='^[\w._%-]+@[\w.-]+\.[a-z]{2,}$' maxlength='254' required>
             </label>
-            <label for="password">Salasana
-                <input type="password" name="password" id="password" minlength="16" maxlength="255" required>
-                <input type="checkbox" onclick="showPassword()">Näytä salasana
+            <label for='password'>Salasana
+                <input type='password' name='password' id='password' minlength='16' maxlength='255' required>
+                <input type='checkbox' onclick='showPassword()'>Näytä salasana
             </label>
-            <input type="submit" name="register" value="Luo käyttäjätili">
-        </form>
+            <input type='submit' name='register' value='Luo käyttäjätili'>
+        </form>";
+        }
+        ?>
 
     </div>
     <?php include "../footer.html" ?>

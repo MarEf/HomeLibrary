@@ -14,20 +14,29 @@
 <body>
     <?php include "../header.php" ?>
     <div id="content">
-
         <h2>Kirjaudu sisään</h2>
-        <form action="user_handler.php" method="POST">
-            <label for="username">Käyttäjätunnus
-                <input type="text" name="username" id="username">
+        <?php
+
+        if (isset($_SESSION['loggedin'])) {
+            echo "<p>Olet jo kirjautunut sisään.<p/>";
+        } else {
+            echo "
+        <form action='user_handler.php' method='POST'>
+            <label for='username'>Käyttäjätunnus
+                <input type='text' name='username' id='username'>
             </label>
-            <label for="password">
-                <input type="password" name="password" id="password" required>
-                <input type="checkbox" onclick="showPassword()">Näytä salasana
+            <label for='password'>
+                <input type='password' name='password' id='password' required>
+                <input type='checkbox' onclick='showPassword()'>Näytä salasana
             </label>
-            <input type="submit" name="login" value="Kirjaudu sisään">
+            <input type='submit' name='login' value='Kirjaudu sisään'>
         </form>
         <div>Unohdin salasanan</div>
-        <div><a href="register.php">Luo uusi käyttäjätili</a></div>
+        <div><a href='register.php'>Luo uusi käyttäjätili</a></div>
+        ";
+        }
+
+        ?>
     </div>
     <?php include "../footer.html" ?>
 </body>

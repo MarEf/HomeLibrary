@@ -1,6 +1,9 @@
 <?php
 
 include_once 'connect.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
 $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
@@ -73,18 +76,23 @@ function prefill_authors()
     global $authors;
     global $author_pattern;
     $author_count = 1;
+    $enabled = "";
+
+    if (!isset($_SESSION['loggedin'])) {
+        $enabled = "disabled";
+    }
 
     if (isset($_POST['authors'])) {
 
         foreach ($authors as $author) {
             if ($author_count == 1) {
                 echo "<span class='author' id='author-block1'>
-                        <input list='authors' name='author[]' id='author1' pattern='$author_pattern' value='$author' required>
+                        <input list='authors' name='author[]' id='author1' pattern='$author_pattern' value='$author' required $enabled>
                         <i class='far fa-minus-square remove inactive'></i>
                       </span>";
             } else {
                 echo "<span class='author' id='author-block$author_count'>
-                        <input list='authors' name='author[]' id='author$author_count' pattern='$author_pattern' value='$author' required>
+                        <input list='authors' name='author[]' id='author$author_count' pattern='$author_pattern' value='$author' required $enabled>
                         <i class='far fa-minus-square remove'></i>
                       </span>";
             }
@@ -92,7 +100,7 @@ function prefill_authors()
         }
     } else {
         echo "<span class='author' id='author-block1'>
-            <input list='authors' name='author[]' id='author1' pattern='$author_pattern' required>
+            <input list='authors' name='author[]' id='author1' pattern='$author_pattern' required $enabled>
             <i class='far fa-minus-square remove inactive'></i>
           </span>";
     }
@@ -127,45 +135,51 @@ function prefill_authors()
 
         <form action="book_handler.php" method="POST">
             <label for="title">Otsikko
-                <input type="text" name="title" id="title" value="<?php echo $title ?>" required>
+                <input type="text" name="title" id="title" value="<?php echo $title ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?> required>
             </label>
             <label for="author" id="author-list">Kirjailija(t)
                 <?php prefill_authors() ?>
-
-                <i class="far fa-plus-square add" onclick="addAuthorField()"></i>
+                <?php if (isset($_SESSION['loggedin'])) {
+                    echo "<i class='far fa-plus-square add' onclick='addAuthorField()'></i>";
+                }
+                ?>
             </label>
             <datalist id="authors">
                 <?php get_authors() ?>
             </datalist>
             <label for="language_id">Kieli
-                <select name="language_id" id="language_id" required>
+                <select name="language_id" id="language_id" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?> required>
                     <option value="">Valitse kieli</option>
                     <?php list_languages() ?>
                 </select>
             </label>
             <label for="cover">Linkki kansikuvaan:
-                <input type="text" name="cover" id="cover" value="<?php echo $cover ?>">
+                <input type="text" name="cover" id="cover" value="<?php echo $cover ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
             <label for="isbn10">ISBN-10
-                <input type="text" name="isbn10" id="isbn10" pattern=<?php echo $isbn10_pattern ?> value="<?php echo $isbn10 ?>">
+                <input type="text" name="isbn10" id="isbn10" pattern=<?php echo $isbn10_pattern ?> value="<?php echo $isbn10 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
             <label for="isbn13">ISBN-13
-                <input type="text" name="isbn13" id="isbn13" pattern=<?php echo $isbn13_pattern ?> value="<?php echo $isbn13 ?>">
+                <input type="text" name="isbn13" id="isbn13" pattern=<?php echo $isbn13_pattern ?> value="<?php echo $isbn13 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
             <label for="blurb">Kuvaus/Takakansiteksti
-                <textarea name="blurb" id="blurb" cols="30" rows="10"><?php echo $blurb ?></textarea>
+                <textarea name="blurb" id="blurb" cols="30" rows="10" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>><?php echo $blurb ?></textarea>
             </label>
             <?php
-            if ($source != "Local") {
-                echo "
+            if (isset($_SESSION['loggedin'])) {
+                if ($source != "Local") {
+                    echo "
                 <input type='hidden' name='book_id' value=$book_id>
                 <input type='submit' name='add_book' value='Lisää uusi kirja'>
                 <input type='submit' name='add_and_collect' value='Lisää uusi kirja ja lisää se kokoelmaan'>";
+                } else {
+                    echo "<input type='hidden' name='book_id' value=$book_id>";
+                    echo '<input type="submit" name="collect_book" value="Lisää kokoelmaan">';
+                    echo '<input type="submit" name="update_book" value="Päivitä kirja">';
+                    echo '<input type="submit" name="delete_book" value="Poista kirja">';
+                }
             } else {
-                echo "<input type='hidden' name='book_id' value=$book_id>";
-                echo '<input type="submit" name="collect_book" value="Lisää kokoelmaan">';
-                echo '<input type="submit" name="update_book" value="Päivitä kirja">';
-                echo '<input type="submit" name="delete_book" value="Poista kirja">';
+                echo "<p>Kirjaudu sisään muokataksesi kirjan tietoja.</p>";
             }
             ?>
         </form>

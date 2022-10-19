@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION)) {
+    session_start();
+}
+
 include_once 'connect.php';
 $author_pattern = "^[^,]+$";
 
@@ -41,7 +45,8 @@ function print_results($sql_result)
         $name = $row['name'];
         $id = $row['author_id'];
 
-        $result .= "<form class='author' action='author_handler.php' method='POST'>
+        if (isset($_SESSION['loggedin'])) {
+            $result .= "<form class='author' action='author_handler.php' method='POST'>
                         <input type='hidden' name='author_id' id='id' value='$id'>
                         <input type='text' name='name' id='name' pattern='$author_pattern' value='$name' required>
 
@@ -49,6 +54,12 @@ function print_results($sql_result)
                         <button name='delete_author' type='submit'><i class='fas fa-trash-alt'></i></button>
                     </form>
                     ";
+        } else {
+            $result .= "<form class='author'>
+                        <input type='text' name='name' id='name' pattern='$author_pattern' value='$name' required disabled>
+                    </form>
+                    ";
+        }
     }
 
     return $result;

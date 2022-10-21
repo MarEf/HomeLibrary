@@ -52,8 +52,7 @@ function register()
 
         echo "Salasana kryptattu.<br>";
 
-        # Generate activation token. Just rand(), until I get this to work
-        $verification_token = rand();
+        $verification_token = "" . rand() . rand();
         echo "Vahvistuskoodi: $verification_token<br>";
 
         // 24 hours
@@ -67,6 +66,14 @@ function register()
         } catch (Throwable $e) {
             echo "Käyttäjätunnuksen luominen ei onnistunut.<br>
                   $e";
+
+            echo "<form id='alert' method='POST' action='register.php'>
+                    <input type='hidden' name='alert' value='Käyttäjätunnuksen luominen ei onnistunut. Yritä hetken kuluttua uudelleen.'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
+            exit;
         }
 
         if ($success) {
@@ -94,12 +101,23 @@ function register()
                 $delete = $yhteys->prepare($query);
                 $delete->bind_param("s", $_POST['username']);
                 $delete->execute();
-                echo "Sähköpostin lähetys epäonnistui. Poistetaan käyttäjätili järjestelmästä, ettei se varaa nimimerkkiä.<br>";
+
+                echo "<form id='alert' method='POST' action='register.php'>
+                        <input type='hidden' name='alert' value='Käyttäjätunnuksen luominen ei onnistunut. Yritä hetken kuluttua uudelleen.'>
+                      </form>
+                      <script>
+                        document.querySelector('#alert').submit();
+                      </script>";
             }
         }
     } else {
         // Inform user that the username is already taken
-        echo "Käyttäjätunnus varattu.<br>";
+        echo "<form id='alert' method='POST' action='register.php'>
+                <input type='hidden' name='alert' value='Käyttäjätunnus on varattu. Kokeile uudelleen toisella käyttäjätunnuksella.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
     }
 }
 
@@ -132,7 +150,12 @@ function login()
 
     if (empty(trim($_POST["username"]))) {
         // NO USERNAME ERROR
-        echo "No username";
+        echo "<form id='alert' method='POST' action='login.php'>
+                <input type='hidden' name='alert' value='Et antanut käyttäjätunnusta'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
         exit;
     } else {
         $username = trim($_POST["username"]);
@@ -141,7 +164,12 @@ function login()
     //Tarkista, ettei salasana ole tyhjä
     if (empty(trim($_POST["password"]))) {
         // NO PASSWORD ERROR
-        echo "No password";
+        echo "<form id='alert' method='POST' action='login.php'>
+                <input type='hidden' name='alert' value='Et antanut salasanaa'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
         exit;
     } else {
         $password = trim($_POST["password"]);
@@ -163,16 +191,33 @@ function login()
                 $_SESSION["username"] = $username;
                 $_SESSION['user_id'] = $user_id;
             } else {
-                // LOGIN FAIL
-                echo "Failed to log in.";
+                echo "<form id='alert' method='POST' action='login.php'>
+                        <input type='hidden' name='alert' value='Virheellinen käyttäjätunnus tai salasana'>
+                      </form>
+                      <script>
+                        document.querySelector('#alert').submit();
+                      </script>";
+                exit;
             }
         } else {
             // LOGIN FAIL
-            echo "Failed to log in.";
+            echo "<form id='alert' method='POST' action='login.php'>
+                    <input type='hidden' name='alert' value='Virheellinen käyttäjätunnus tai salasana'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
+            exit;
         }
     } else {
         // LOGIN FAIL
-        echo "Failed to log in.";
+        echo "<form id='alert' method='POST' action='login.php'>
+                <input type='hidden' name='alert' value='Virheellinen käyttäjätunnus tai salasana'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
+        exit;
     }
 }
 

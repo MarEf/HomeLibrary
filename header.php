@@ -25,10 +25,10 @@ if (!isset($_SESSION)) {
         <a class='nav' href='<?php echo $book_lookup ?>'>Selaa kirjoja</a>
         <a class='nav' href='<?php echo $isbn_lookup ?>'>Hae kirja</a>
         <a class='nav' href='<?php echo $book ?>'>Uusi kirja</a>
-        <a class='nav' href='<?php echo $home ?>'>Omat tiedot</a>
         <a class='nav' href='<?php echo $feedback ?>'>Anna palautetta</a>
         <?php
         if (isset($_SESSION["loggedin"])) {
+            echo "<a class='nav' href='<?php echo $home ?>'>Omat tiedot</a>";
             echo "<a class='nav' href=$logout>Kirjaudu ulos</a>";
         } else {
             echo "<a class='nav' href=$login>Kirjaudu sisään</a>";

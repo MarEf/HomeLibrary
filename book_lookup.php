@@ -239,7 +239,7 @@ function print_results($result)
   <?php include "header.php" ?>
 
   <div id="content">
-    <h1>Selaa kirjoja</h1>
+    <h2>Selaa kirjoja</h2>
 
     <form action="" method="POST">
       <label for="title"> Otsikko tai otsikon osa

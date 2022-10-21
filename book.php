@@ -47,7 +47,9 @@ function list_languages()
     global $yhteys;
 
     # Fetch languages from database
-    $query = "SELECT language_id, name_fin FROM languages";
+    $query = "SELECT language_id, name_fin 
+              FROM languages
+              ORDER BY name_fin ASC";
     $languages = $yhteys->query($query);
 
     while ($row = $languages->fetch_assoc()) {
@@ -63,7 +65,8 @@ function get_authors()
 {
     global $yhteys;
 
-    $query = "SELECT * FROM authors";
+    $query = "SELECT * FROM authors
+              ORDER BY name";
     $authors = $yhteys->query($query);
 
     while ($row = $authors->fetch_assoc()) {
@@ -125,11 +128,19 @@ function prefill_authors()
     <?php include "header.php" ?>
     <div id="content">
         <?php
+        $alert = "";
+
         if ($source == 'Local') {
             echo '<h2>Muokkaa kirjan tietoja</h2>';
         } else {
             echo '<h2>Uusi kirja</h2>';
         }
+
+        if (isset($_POST['alert'])) {
+            $alert = $_POST['alert'];
+        }
+
+        echo "<p>$alert</p>";
 
         ?>
 
@@ -137,7 +148,7 @@ function prefill_authors()
             <label for="title">Otsikko
                 <input type="text" name="title" id="title" value="<?php echo $title ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?> required>
             </label>
-            <label for="author" id="author-list">Kirjailija(t)
+            <label for="author" id="author-list">Kirjailija(t) <br> Jos kirjailija ei ole tiedossa, valitse [TUNTEMATON KIRJAILIJA]
                 <?php prefill_authors() ?>
                 <?php if (isset($_SESSION['loggedin'])) {
                     echo "<i class='far fa-plus-square add' onclick='addAuthorField()'></i>";
@@ -156,10 +167,10 @@ function prefill_authors()
             <label for="cover">Linkki kansikuvaan (vapaaehtoinen)
                 <input type="text" name="cover" id="cover" value="<?php echo $cover ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
-            <label for="isbn10">ISBN-10 (vapaaehtoinen)
+            <label for="isbn10">ISBN-10 (vapaaehtoinen) <br> Formaatti: 10 numeroa tai 9 numeroa ja X-kirjain
                 <input type="text" name="isbn10" id="isbn10" pattern=<?php echo $isbn10_pattern ?> value="<?php echo $isbn10 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
-            <label for="isbn13">ISBN-13 (vapaaehtoinen)
+            <label for="isbn13">ISBN-13 (vapaaehtoinen) <br> Formaatti: 13 numeroa
                 <input type="text" name="isbn13" id="isbn13" pattern=<?php echo $isbn13_pattern ?> value="<?php echo $isbn13 ?>" <?php echo (!isset($_SESSION['loggedin'])) ? "disabled" : ''; ?>>
             </label>
             <label for="blurb">Kuvaus/Takakansiteksti (vapaaehtoinen)

@@ -22,7 +22,13 @@
         if (isset($_SESSION['loggedin'])) {
             echo "<p>Sinulla on jo käyttäjätili. Mikäli haluat luoda uuden tilin, sinun on ensin kirjauduttava ulos<p/>";
         } else {
+            $alert = "";
+
+            if (isset($_POST['alert'])) {
+                $alert = $_POST['alert'];
+            }
             echo "
+            <p>$alert</p>
         <form action='user_handler.php' method='post'>
             <label for='username'>Käyttäjätunnus
                 <input type='text' name='username' id='username' maxlength='255' required>

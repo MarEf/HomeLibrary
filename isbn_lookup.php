@@ -198,7 +198,17 @@ if (isset($_POST["search"])) {
     <div id="content">
         <h2>Hae kirja</h2>
         <form action="" method="POST">
-            <label for="isbn">ISBN
+            <label for="isbn">
+                <h3>ISBN</h3>
+                <div>Hyväksytyt arvot:
+                    <ul>
+                        <li>Tyhjä kenttä</li>
+                        <li>10 numeroa</li>
+                        <li>9 numeroa ja X-kirjain</li>
+                        <li>13 numeroa</li>
+                    </ul>
+                    <p>Numerot saavat olla erotettuina välilyönnein tai väliviivoin (-).</p>
+                </div>
                 <input name="isbn" id="isbn" type="text" pattern=<?php echo $isbn_pattern ?> placeholder="9781234567890">
             </label>
             <input type="submit" name="search" value="Search">

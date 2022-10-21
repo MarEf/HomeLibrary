@@ -16,14 +16,20 @@
     <div id="content">
         <h2>Kirjaudu sisään</h2>
         <?php
+        $alert = "";
+
+        if (isset($_POST['alert'])) {
+            $alert = $_POST['alert'];
+        }
 
         if (isset($_SESSION['loggedin'])) {
             echo "<p>Olet jo kirjautunut sisään.<p/>";
         } else {
             echo "
+            <p>$alert</p>
         <form action='user_handler.php' method='POST'>
             <label for='username'>Käyttäjätunnus
-                <input type='text' name='username' id='username'>
+                <input type='text' name='username' id='username' required>
             </label>
             <label for='password'>
                 <input type='password' name='password' id='password' required>

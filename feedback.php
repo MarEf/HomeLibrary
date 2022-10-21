@@ -4,6 +4,8 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+$alert = "";
+
 if (isset($_POST['feedback'])) {
     $query = "INSERT INTO feedbacks (user_id, topic, message)
               VALUES (?, ?, ?)";
@@ -12,8 +14,7 @@ if (isset($_POST['feedback'])) {
         $add_feedback->bind_param("iss", $_SESSION['user_id'], $_POST['topic'], $_POST['message']);
         $add_feedback->execute();
     } catch (Throwable $e) {
-        echo "Palautteen anto ei onnistunut.<br>";
-        echo $e;
+        $alert =  "Palautelomakkeen lähetys ei onnistunut. Yritä hetken kuluttua uudelleen.";
     }
 }
 ?>
@@ -50,6 +51,9 @@ if (isset($_POST['feedback'])) {
             <p>
                 Voit jättää palautetta alla olevalla lomakkeella. 
             </p> 
+            <p>
+                $alert
+            </p>
 
             <form action='' id='feedback-form' method='POST'>
                 <label for='topic'>Palautteen aihe

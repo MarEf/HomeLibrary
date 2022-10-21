@@ -16,8 +16,8 @@ switch (true) {
         break;
     case isset($_POST['collect_book']):
         echo "Lisää kokoelmaan<br>";
-        collect_book();
-        #header('Location: ' . 'users/my_books.php');
+        collect_book(); # Currently doesn't work due to database error.
+        header('Location: ' . 'users/my_books.php');
         die();
         break;
     case isset($_POST['add_and_collect']):
@@ -59,7 +59,12 @@ function check_data_format()
     if (isset($_POST['isbn10'])) {
         preg_match("/$isbn10_pattern/", $_POST['isbn10'], $isbn10_match, PREG_UNMATCHED_AS_NULL);
         if (!$isbn10_match) {
-            header('Location: ' . 'book.php');
+            echo "<form id='alert' method='POST' action='book.php'>
+                    <input type='hidden' name='alert' value='ISBN-numeron tulee olla oikeassa formaatissa.\nSallittuja formaatteja ovat:\n - 10 numeroa\n - 9 numeroa ja X-kirjain\n - 13 numeroa'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
             die();
         }
     }
@@ -68,7 +73,12 @@ function check_data_format()
     if (isset($POST['isbn13'])) {
         preg_match("/$isbn13_pattern/", $_POST['isbn13'], $isbn13_match, PREG_UNMATCHED_AS_NULL);
         if (!$isbn13_match) {
-            header('Location: ' . 'book.php');
+            echo "<form id='alert' method='POST' action='book.php'>
+                    <input type='hidden' name='alert' value='ISBN-numeron tulee olla oikeassa formaatissa.\nSallittuja formaatteja ovat:\n - 10 numeroa\n - 9 numeroa ja X-kirjain\n - 13 numeroa'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
             die();
         }
     }
@@ -76,7 +86,12 @@ function check_data_format()
     # Title does not exist when it should
     if (isset($_POST['add_book']) || isset($_POST['update_book'])) {
         if (!isset($_POST['title'])) {
-            header('Location: ' . 'book.php');
+            echo "<form id='alert' method='POST' action='book.php'>
+                    <input type='hidden' name='alert' value='Otsikko puuttuu'>
+                      </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
             die();
         }
         # Author is of the right format
@@ -85,13 +100,23 @@ function check_data_format()
             foreach ($authors as $author) {
                 preg_match("/$author_pattern/", $author, $author_match, PREG_UNMATCHED_AS_NULL);
                 if (!$author_match) {
-                    header('Location: ' . 'book.php');
+                    echo "<form id='alert' method='POST' action='book.php'>
+                            <input type='hidden' name='alert' value='Kirjailijan nimi ei saa sisältää pilkkua (,)'>
+                          </form>
+                          <script>
+                            document.querySelector('#alert').submit();
+                          </script>";
                     die();
                 }
             }
         } else {
             # At least one author must exist.
-            header('Location: ' . 'book.php');
+            echo "<form id='alert' method='POST' action='book.php'>
+                    <input type='hidden' name='alert' value='Kirjailija puuttuu'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
             die();
         }
 
@@ -107,16 +132,31 @@ function check_data_format()
                 $check_language->bind_param("i", $language);
                 $check_language->execute();
                 if (!$check_language->get_result()) {
-                    header('Location: ' . 'book.php');
+                    echo "<form id='alert' method='POST' action='book.php'>
+                            <input type='hidden' name='alert' value='Kieltä ei ole valittu tai valittua kieltä ei ole järjestelmässä.'>
+                          </form>
+                          <script>
+                            document.querySelector('#alert').submit();
+                          </script>";
                     die();
                 }
             } catch (Throwable $e) {
                 # If language_id is not int, binding parameters will fail and lead us here
-                header('Location: ' . 'book.php');
+                echo "<form id='alert' method='POST' action='book.php'>
+                        <input type='hidden' name='alert' value='Kieli on väärässä formaatissa. En tiedä, miten onnistuit tässä...'>
+                      </form>
+                      <script>
+                        document.querySelector('#alert').submit();
+                      </script>";
                 die();
             }
         } else {
-            header('Location: ' . 'book.php');
+            echo "<form id='alert' method='POST' action='book.php'>
+                    <input type='hidden' name='alert' value='Kieltä ei ole valittu tai valittua kieltä ei ole järjestelmässä.'>
+                  </form>
+                  <script>
+                    document.querySelector('#alert').submit();
+                  </script>";
             die();
         }
     }
@@ -138,6 +178,13 @@ function add_book()
     } catch (Throwable $e) {
         echo "Kirjan lisääminen ei onnistunut.<br>";
         echo $e;
+
+        echo "<form id='alert' method='POST' action='book.php'>
+                <input type='hidden' name='alert' value='Kirjan lisääminen ei onnistunut. Yritä hetken kuluttua uudelleen.\nMikäli ongelma jatkuu, ota yhteyttä ylläpitoon.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
     }
 
     if (isset($_POST['author'])) {
@@ -207,6 +254,12 @@ function collect_book()
         $yhteys->close();
     } catch (Throwable $e) {
         echo "Failed to add book to collection.<br>$e";
+        echo "<form id='alert' method='POST' action='book.php'>
+                <input type='hidden' name='alert' value='Kirjan lisääminen kokoelmaan ei onnistunut. Tämä ominaisuus ei tällä hetkellä toimi.\n Ilmoitamme etusivulla kun tilanne muuttuu.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
     }
 }
 
@@ -246,6 +299,12 @@ function update_book()
         }
     } catch (Throwable $e) {
         echo "Päivitys epäonnistui: " . $e;
+        echo "<form id='alert' method='POST' action='book.php'>
+                <input type='hidden' name='alert' value='Kirjan tietojen päivitys. Yritä hetken kuluttua uudelleen.\nMikäli ongelma jatkuu, ota yhteyttä ylläpitoon.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
     }
 }
 
@@ -261,6 +320,12 @@ function delete_book()
         $yhteys->close();
     } catch (Throwable $e) {
         echo "Kirjan poisto epäonnistui: " . $e;
+        echo "<form id='alert' method='POST' action='book.php'>
+                <input type='hidden' name='alert' value='Kirjan poistaminen tietokannasta ei onnistunut. Yritä hetken kuluttua uudelleen.\nMikäli ongelma jatkuu, ota yhteyttä ylläpitoon.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
     }
 }
 

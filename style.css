@@ -281,7 +281,9 @@ th {
     color: var(--inactive-link-color);
 }
 
-
+.danger {
+    background-color: red !important;
+}
 
 /*Tämä on yksinkertaisempaa tehdä näin päin*/
 

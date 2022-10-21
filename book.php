@@ -9,7 +9,7 @@ $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
 $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
 
 # Commas disallowed from author fields, because it breaks everything
-$author_pattern = "^[^,]+$";
+$author_pattern = "^[^,]+$|^$";
 
 # Set all variables to empty string.
 $book_id = "";
@@ -103,9 +103,9 @@ function prefill_authors()
         }
     } else {
         echo "<span class='author' id='author-block1'>
-            <input list='authors' name='author[]' id='author1' pattern='$author_pattern' required $enabled>
-            <i class='far fa-minus-square remove inactive'></i>
-          </span>";
+                <input list='authors' name='author[]' id='author1' pattern='$author_pattern' required $enabled>
+                <i class='far fa-minus-square remove inactive'></i>
+              </span>";
     }
 }
 
@@ -187,7 +187,7 @@ function prefill_authors()
                     echo "<input type='hidden' name='book_id' value=$book_id>";
                     echo '<input type="submit" name="collect_book" value="Lisää kokoelmaan">';
                     echo '<input type="submit" name="update_book" value="Päivitä kirja">';
-                    echo '<input type="submit" name="delete_book" value="Poista kirja">';
+                    echo '<input type="submit" name="delete_book" value="Poista kirja" onclick="return confirm(\'Oletko varma, että haluat poistaa kirjan?\')" class="danger">';
                 }
             } else {
                 echo "<p>Kirjaudu sisään muokataksesi kirjan tietoja.</p>";

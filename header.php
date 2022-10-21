@@ -28,7 +28,7 @@ if (!isset($_SESSION)) {
         <a class='nav' href='<?php echo $feedback ?>'>Anna palautetta</a>
         <?php
         if (isset($_SESSION["loggedin"])) {
-            echo "<a class='nav' href='<?php echo $home ?>'>Omat tiedot</a>";
+            echo "<a class='nav' href=$home>Omat tiedot</a>";
             echo "<a class='nav' href=$logout>Kirjaudu ulos</a>";
         } else {
             echo "<a class='nav' href=$login>Kirjaudu sisään</a>";

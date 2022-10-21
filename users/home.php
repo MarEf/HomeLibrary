@@ -59,11 +59,9 @@ if (isset($_SESSION['loggedin'])) {
                   <form action='password.php' method='POST'>
                     <input type='submit' value='Vaihda salasana' />
                   </form>
-                  <form action='password.php' method='POST'>
-                    <input type='submit' value='Vaihda salasana' />
-                  </form>
+
                   <form action='user_handler.php' method='POST'>
-                    <input type='submit' name='delete_user' value='Poista käyttäjätili' />
+                    <input class='danger' type='submit' name='delete_user' value='Poista käyttäjätili' onclick=\"return confirm('Oletko varma, että haluat poistaa käyttäjätilisi lopullisesti? Poistettua tiliä ei voi palauttaa.')\" />
                   </form>
                   
                   </div>";

@@ -204,7 +204,7 @@ function print_results($result)
             <form action='book_handler.php' method='POST'>
               <input type='hidden' name='book_id' value='$book_id'>
               <input type='hidden' name='delete_book' value='true'>
-              <button type='submit'><i class='fas fa-trash-alt'></i></button>
+              <button type='submit' onclick=\"return confirm('Oletko varma, että haluat poistaa kirjan?')\"><i class='fas fa-trash-alt'></i></button>
             </form>
           </td>
         </tr>

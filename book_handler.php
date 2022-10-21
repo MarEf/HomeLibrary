@@ -49,18 +49,18 @@ switch (true) {
 
 function check_data_format()
 {
-    $author_pattern = "^[^,]+$";
+    $author_pattern = "^[^,]+$|^$";
     $isbn10_pattern = "^(?:\D*\d){10}$|^(?:\D*\d){9}[\d\-\s]*[xX]$";
     $isbn13_pattern = "^(?:\D*\d){13}[\d\-\s]*$";
 
     # On error, reroute to book.php
 
     #ISBN-10 is of the right format
-    if (isset($_POST['isbn10'])) {
+    if ($_POST['isbn10']) {
         preg_match("/$isbn10_pattern/", $_POST['isbn10'], $isbn10_match, PREG_UNMATCHED_AS_NULL);
         if (!$isbn10_match) {
             echo "<form id='alert' method='POST' action='book.php'>
-                    <input type='hidden' name='alert' value='ISBN-numeron tulee olla oikeassa formaatissa.\nSallittuja formaatteja ovat:\n - 10 numeroa\n - 9 numeroa ja X-kirjain\n - 13 numeroa'>
+                    <input type='hidden' name='alert' value='ISBN-10-numeron tulee olla oikeassa formaatissa.<br>Sallittuja formaatteja ovat:<br> - 10 numeroa<br> - 9 numeroa ja X-kirjain'>
                   </form>
                   <script>
                     document.querySelector('#alert').submit();
@@ -70,11 +70,11 @@ function check_data_format()
     }
 
     # ISBN-13 is of the right format
-    if (isset($POST['isbn13'])) {
+    if ($_POST['isbn13']) {
         preg_match("/$isbn13_pattern/", $_POST['isbn13'], $isbn13_match, PREG_UNMATCHED_AS_NULL);
         if (!$isbn13_match) {
             echo "<form id='alert' method='POST' action='book.php'>
-                    <input type='hidden' name='alert' value='ISBN-numeron tulee olla oikeassa formaatissa.\nSallittuja formaatteja ovat:\n - 10 numeroa\n - 9 numeroa ja X-kirjain\n - 13 numeroa'>
+                    <input type='hidden' name='alert' value='ISBN-13-numeron tulee sisältää 13 numeroa'>
                   </form>
                   <script>
                     document.querySelector('#alert').submit();
@@ -171,6 +171,13 @@ function add_book()
     $isbn10 = preg_replace("/\W|_/", '', $_POST['isbn10']);
     $isbn13 = preg_replace("/\W|_/", '', $_POST['isbn13']);
 
+    // Set empty ISBN-values to NULL to avoid problems with unique empty strings
+    if ($isbn10 == "") {
+        $isbn10 = NULL;
+    } else if ($isbn13 == "") {
+        $isbn13 = NULL;
+    }
+
     try {
         $add_book = $yhteys->prepare($query);
         $add_book->bind_param("ssisss", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb']);
@@ -180,13 +187,15 @@ function add_book()
         echo $e;
 
         echo "<form id='alert' method='POST' action='book.php'>
-                <input type='hidden' name='alert' value='Kirjan lisääminen ei onnistunut. Yritä hetken kuluttua uudelleen.\nMikäli ongelma jatkuu, ota yhteyttä ylläpitoon.'>
+                <input type='hidden' name='alert' value='Kirjan lisääminen ei onnistunut. Yritä hetken kuluttua uudelleen.<br>Mikäli ongelma jatkuu, ota yhteyttä ylläpitoon.'>
               </form>
               <script>
                 document.querySelector('#alert').submit();
               </script>";
+        die();
     }
 
+    // Why does this not work?
     if (isset($_POST['author'])) {
         add_authors();
     }
@@ -294,6 +303,7 @@ function update_book()
         $edit_book->bind_param("ssisssi", $_POST['title'], $_POST['cover'], $_POST['language_id'], $isbn10, $isbn13, $_POST['blurb'], $_POST['book_id']);
         $edit_book->execute();
 
+        // Why does this work?
         if (isset($_POST['author'])) {
             add_authors();
         }

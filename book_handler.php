@@ -195,13 +195,15 @@ function add_book()
         die();
     }
 
-    // Why does this not work?
+    // Fetch last altered autoincrement value.
+    $book_id = $add_book->insert_id;
+
     if (isset($_POST['author'])) {
-        add_authors();
+        add_authors($book_id);
     }
 }
 
-function add_authors()
+function add_authors($book_id)
 {
     echo "Adding authors<br>";
     global $yhteys;
@@ -239,7 +241,7 @@ function add_authors()
         echo "Author ID: $author_id[0]<br>";
         // Bind book to author
         echo "Adding author to book<br>";
-        $bind->bind_param("ii", $_POST['book_id'], $author_id[0]);
+        $bind->bind_param("ii", $book_id, $author_id[0]);
         // If author did not exist and was added manually, this line fails with an error:
         // Fatal error: Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails...
         // However, it sometimes works fine. I don't know how to fix this.
@@ -305,7 +307,7 @@ function update_book()
 
         // Why does this work?
         if (isset($_POST['author'])) {
-            add_authors();
+            add_authors($_POST['book_id']);
         }
     } catch (Throwable $e) {
         echo "Päivitys epäonnistui: " . $e;

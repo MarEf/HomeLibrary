@@ -6,6 +6,7 @@ if (!isset($_SESSION)) {
 }
 
 check_data_format();
+$book_id = "";
 
 switch (true) {
     case isset($_POST['add_book']):
@@ -16,14 +17,14 @@ switch (true) {
         break;
     case isset($_POST['collect_book']):
         echo "Lisää kokoelmaan<br>";
-        collect_book(); # Currently doesn't work due to database error.
+        collect_book($_POST['book_id']); # Currently doesn't work due to database error.
         header('Location: ' . 'users/my_books.php');
         die();
         break;
     case isset($_POST['add_and_collect']):
         echo "Luo ja lisää kokoelmaan<br>";
         add_book();
-        collect_book();
+        collect_book($book_id);
         header('Location: ' . 'users/my_books.php');
         die();
         break;
@@ -196,6 +197,7 @@ function add_book()
     }
 
     // Fetch last altered autoincrement value.
+    global $book_id;
     $book_id = $add_book->insert_id;
 
     if (isset($_POST['author'])) {
@@ -242,53 +244,46 @@ function add_authors($book_id)
         // Bind book to author
         echo "Adding author to book<br>";
         $bind->bind_param("ii", $book_id, $author_id[0]);
-        // If author did not exist and was added manually, this line fails with an error:
-        // Fatal error: Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails...
-        // However, it sometimes works fine. I don't know how to fix this.
         $bind->execute();
         echo "Added author to book.<br>";
     }
 }
 
 
-function collect_book()
+function collect_book($book_id)
 {
     global $yhteys;
+    $owned = 1;
     $query = "INSERT INTO book_user (book_id, user_id, owned)
-              VALUES (?, ?, 1)";
+              VALUES (?, ?, ?)";
 
     try {
         $collect_book = $yhteys->prepare($query);
-        $collect_book->bind_param("ii", $_POST['book_id'], $_SESSION['user_id']);
-        // Fatal error: Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails...
+        $collect_book->bind_param("iii", $book_id, $_SESSION['user_id'], $owned);
         $collect_book->execute();
-        $yhteys->close();
     } catch (Throwable $e) {
+        echo "Book ID: $book_id<br>
+              User ID: {$_SESSION['user_id']}<br>";
         echo "Failed to add book to collection.<br>$e";
         echo "<form id='alert' method='POST' action='book.php'>
-                <input type='hidden' name='alert' value='Kirjan lisääminen kokoelmaan ei onnistunut. Tämä ominaisuus ei tällä hetkellä toimi.\n Ilmoitamme etusivulla kun tilanne muuttuu.'>
+                <input type='hidden' name='alert' value='Kirjan lisääminen kokoelmaan ei onnistunut. Kokeile myöhemmin uudelleen. Jos ongelma jatkuu, ota yhteyttä ylläpitoon.'>
               </form>
               <script>
                 document.querySelector('#alert').submit();
               </script>";
+        die();
     }
+}
+
+function remove_from_collection()
+{
+    global $yhteys;
 }
 
 function borrow_book()
 {
     global $yhteys;
-    $query = "INSERT INTO book_user (book_id, user_id, owned, borrowed_from, borrowed_to) 
-              VALUES (?, ?, ?, ?, ?)";
-    /*
-    try {
-    $borrow_book = $yhteys->prepare($query);
-    $borrow_book->bind_param("iiiii", $_POST['book_id'], $_POST['user_id'], 0, $_SESSION['user_id'], $_POST['user_id']);
-    $borrow_book->execute();
-    $yhteys->close();
-    } catch (Throwable $e) {
-
-    }
-    */
+    // TO BE IMPLEMENTED
 }
 
 function update_book()

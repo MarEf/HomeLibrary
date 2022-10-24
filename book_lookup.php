@@ -31,7 +31,9 @@ function list_languages($languages)
 if (@$_POST['find_books']) {
   $title = "%{$_POST['title']}%";
   $isbn = "%" . preg_replace("/\W|_/", '', $_POST['isbn']) . "%";
-  $user_id = $_SESSION['user_id'];
+  if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+  }
 
   # Initialize query based on input
   switch (true) {

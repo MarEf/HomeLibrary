@@ -199,7 +199,7 @@ function print_results($result)
                 <td>
                     <form action='../book_handler.php' method='POST'>
                         <input type='hidden' name='book_id' value='$book_id'>
-                        <input type='hidden' name='uncollect'>
+                        <input type='hidden' name='remove_book'>
                         <button type='submit'><i class='fa fa-ban'></i></i></i></button>
                     </form>
                     $book_form

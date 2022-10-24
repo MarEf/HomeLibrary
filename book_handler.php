@@ -28,6 +28,11 @@ switch (true) {
         header('Location: ' . 'users/my_books.php');
         die();
         break;
+    case isset($_POST['remove_book']):
+        remove_from_collection();
+        header('Location: ' . 'users/my_books.php');
+        die();
+        break;
     case isset($_POST['update_book']):
         echo "Päivitä kirja<br>";
         update_book();
@@ -278,6 +283,22 @@ function collect_book($book_id)
 function remove_from_collection()
 {
     global $yhteys;
+    $query = "DELETE FROM book_user
+              WHERE book_id = ? AND user_id = ?";
+
+    try {
+        $remove_book = $yhteys->prepare($query);
+        $remove_book->bind_param("ii", $_POST['book_id'], $_SESSION['user_id']);
+        $remove_book->execute();
+    } catch (Throwable $e) {
+        echo "<form id='alert' method='POST' action='book.php'>
+                <input type='hidden' name='alert' value='Kirjan poistaminen kokoelmasta ei onnistunut. Kokeile myöhemmin uudelleen. Jos ongelma jatkuu, ota yhteyttä ylläpitoon.'>
+              </form>
+              <script>
+                document.querySelector('#alert').submit();
+              </script>";
+        die();
+    }
 }
 
 function borrow_book()
